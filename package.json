@@ -1,0 +1,26 @@
+{
+  "name": "library-management",
+  "version": "1.0.0",
+  "description": "A library managment system where users can add, view, update, and delete books in a library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IngridGdesigns/library-management.git"
+  },
+  "keywords": [
+    "database",
+    "CRUD"
+  ],
+  "author": "Ingrid Garcia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IngridGdesigns/library-management/issues"
+  },
+  "homepage": "https://github.com/IngridGdesigns/library-management#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
