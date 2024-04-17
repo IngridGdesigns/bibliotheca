@@ -17,11 +17,14 @@ const LogOutButton = () => {
 }
 
 function App() {
+
+  // const { isAuthenticated, isLoading } = useAuth0();
   return (
-    <div className="App">
-      <p>to edit</p>
+    <div className = "App" >
+      <p>Not yet authenticated</p>
       <LoginButton />
       <LogOutButton />
+    
         <a
           className="App-link"
           href="https://reactjs.org"
