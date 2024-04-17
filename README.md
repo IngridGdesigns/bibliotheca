@@ -1,4 +1,4 @@
-# library-management
+# bibliotheca
 
 A library management system where users can add, view, update, and delete books in a library.
 
