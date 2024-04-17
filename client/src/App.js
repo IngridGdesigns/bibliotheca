@@ -1,5 +1,6 @@
 import './App.css';
 import { useAuth0 } from '@auth0/auth0-react';
+import UserProfile from './Components/UserProfile';
 
 const LoginButton = () => {
   const { loginWithRedirect } = useAuth0();
@@ -29,7 +30,7 @@ function App() {
         >
           Learn React
         </a>
-
+    <UserProfile />
     </div>
   );
 }
