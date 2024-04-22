@@ -104,7 +104,7 @@ api.post('/users', async (req, res) => {
     })
 })
 
-// update user by id
+// update user by member_id
 api.put('/users/:member_id', async (req, res) => {
     const client = await pool.connect();
     const memberId = parseInt(req.params.member_id);
