@@ -4,6 +4,8 @@ dist
 
 # ignore env
 .env
+v1.sql
+v2.sql
 
 # Dependency directories
 node_modules/
