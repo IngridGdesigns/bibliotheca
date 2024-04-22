@@ -1,5 +1,6 @@
 const express = require('express');
 let api = express.Router(); //to create modular mountable route handlers
+const bcrypt = require('bcryptjs')
 
 api.use(function(req, res, next) {
     res._json = res.json;
@@ -61,10 +62,10 @@ api.get('/users', async(req, res) => {
 })
 
 // get user by id
-api.get('/users/:id', async (req, res) => {
+api.get('/users/:member_id', async (req, res) => {
     const client = await pool.connect();
 
-    let id = parseInt(req.params.id);
+    let id = parseInt(req.params.member_id);
 
     await client.query('SELECT * FROM users WHERE member_id =$1', [id], (err, result) => {
       if (err) {
@@ -84,8 +85,12 @@ api.post('/users', async (req, res) => {
 
     let name = req.body.name;
     let email = req.body.email;
-    let password = req.body.password; // needs encryption
+    let password = bcrypt.hashSync(req.body.password, 8); // encryption - hash a password
     let role = req.body.role;
+
+     if (!name || !email || !password || !role) {
+      return res.status(400).json({ error: 'name, email, password and role are required' });
+    }
 
     await client.query('INSERT INTO USERS(name, email, password, role) VALUES($1, $2, $3, $4) RETURNING *',
         [name, email, password, role], (err, result) => {
@@ -93,7 +98,7 @@ api.post('/users', async (req, res) => {
                 res.status(500).send('Server error')
                 client.release()
             } else {
-                res.status(200).json(reuslt.rows[0])
+                res.status(200).json(result.rows[0])
                 client.release()
             }
     })
@@ -103,11 +108,14 @@ api.post('/users', async (req, res) => {
 api.put('/users/:member_id', async (req, res) => {
     const client = await pool.connect();
     const memberId = parseInt(req.params.member_id);
+    
     const { name, email, password, role } = req.body;
+    password = bcrypt.hashSync(req.body.password, 8);
 
     try {
         let res = await client.query(
             'UPDATE users SET username = $1, email = $2, password = $3, role = $4 WHERE member_id = $5 RETURNING *',
+          
             [name, email, password, role, memberId])
             res.status(200).json(`This user with the id: ${memberId} was updated!`)
     } catch (err) {
