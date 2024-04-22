@@ -38,7 +38,7 @@ pool.on('error', (error) => {
 
 
 app.use('/api', require('./routes/users'));
-app.use('/info', require('./routes/testInfo'))
+app.use('/test', require('./routes/testInfo'))
 
 
 // TURNED OFF AUTH to test endpoints for now - WIP
