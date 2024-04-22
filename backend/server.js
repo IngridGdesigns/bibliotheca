@@ -37,8 +37,10 @@ pool.on('error', (error) => {
 });
 
 
-app.use('/api', require('./routes/users'));
-app.use('/test', require('./routes/testInfo'))
+app.use('/api/users', require('./routes/users')); //http://localhost:3001/api/users
+app.use('/api/authors', require('./routes/authors'))
+app.use('/api/books', require('./routes/books'))
+app.use('/test', require('./routes/testInfo')) //http://localhost:3001/test/info should show data
 
 
 // TURNED OFF AUTH to test endpoints for now - WIP
