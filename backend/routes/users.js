@@ -42,7 +42,7 @@ pool.on('error', (error) => {
 ********************************/
 
 // Gets all users table 
-api.get('/users', async(req, res) => {
+api.get('/', async(req, res) => {
    
     const client = await pool.connect();
     
@@ -62,7 +62,7 @@ api.get('/users', async(req, res) => {
 })
 
 // get user by id
-api.get('/users/:member_id', async (req, res) => {
+api.get('/:member_id', async (req, res) => {
     const client = await pool.connect();
 
     let id = parseInt(req.params.member_id);
@@ -80,7 +80,7 @@ api.get('/users/:member_id', async (req, res) => {
 })
 
 // add new user
-api.post('/users', async (req, res) => {
+api.post('/', async (req, res) => {
     const client = await pool.connect();
 
     let name = req.body.name;
@@ -105,7 +105,7 @@ api.post('/users', async (req, res) => {
 })
 
 // update user by member_id
-api.put('/users/:member_id', async (req, res) => {
+api.put('/:member_id', async (req, res) => {
     const client = await pool.connect();
     const memberId = parseInt(req.params.member_id);
     
@@ -126,7 +126,7 @@ api.put('/users/:member_id', async (req, res) => {
 })
 
 // delete by user member id
-api.delete('/users/:member_id', async (req, res) => {
+api.delete('/:member_id', async (req, res) => {
     const client = await pool.connect();
     const memberId = parseInt(req.params.member_id);
     const name = req.params.name;
@@ -146,7 +146,6 @@ api.delete('/users/:member_id', async (req, res) => {
        }
    })
 })
-
 
 
 module.exports = api;

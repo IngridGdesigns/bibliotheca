@@ -11,7 +11,7 @@ info.use(function(req, res, next) {
     next();
 })
 
-info.get('/api/v1/info', (req, res) => {
+info.get('/info', (req, res) => {
     console.log('test route running')
     const status = {
         'Status': "Running"
