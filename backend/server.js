@@ -3,14 +3,20 @@ const bodyParser = require('body-parser') //parsing body
 const cors = require('cors') //cors
 const morgan = require('morgan');//HTTP request logger middleware, generates logs for API request
 const helmet = require('helmet');// security middleware
-const pool = require('./database'); // Import your PostgreSQL connection pool
-const { auth } = require('express-oauth2-jwt-bearer');
+// const pool = require('./database')// Import your PostgreSQL connection pool
+// import express from 'express';
+// import bodyParser from 'body-parser';
+// import cors from 'cors';
+// import morgan from 'morgan';
+// import helmet from 'helmet';
+// import pool from './database.js'
+// const { auth } = require('express-oauth2-jwt-bearer');
 
 require('dotenv').config({ debug: true }) //to use process.env
 
 const PORT = process.env.PORT || 3001;
-const AUDIENCE = process.env.Auth0_AUDIENCE || '';
-const DOMAIN = process.env.AUTH0_DOMAIN || '';
+// const AUDIENCE = process.env.Auth0_AUDIENCE || '';
+// const DOMAIN = process.env.AUTH0_DOMAIN || '';
 
 const app = express(); // instantiate express app
 
@@ -27,24 +33,25 @@ app.use('/api/users', require('./routes/users')); //http://localhost:3001/api/us
 app.use('/api/authors', require('./routes/authors'))
 app.use('/api/books', require('./routes/books'))
 app.use('/api/book-copies', require('./routes/copies'))
+app.use('/api/publishers', require('./routes/publishers'))
 app.use('/test', require('./routes/testInfo')) //http://localhost:3001/test/info should show data
 
 
 // TURNED OFF AUTH to test endpoints for now - WIP
 // Authorization middleware. When used, the Access Token must
 // exist and be verified against the Auth0 JSON Web Key Set.
-const checkJwt = auth({
-  audience: AUDIENCE,
-  issuerBaseURL: `https://${DOMAIN}/`,
-  tokenSigningAlg: 'RS256'
-});
+// const checkJwt = auth({
+//   audience: AUDIENCE,
+//   issuerBaseURL: `https://${DOMAIN}//.well-known/jwks.json`,
+//   tokenSigningAlg: 'RS256'
+// });
 
 
 
-app.get('/', async (req, res) => { //unprotected route
-    console.log
-    res.send("Hello and welcome to Bibliotheca")
-})
+// app.get('/', async (req, res) => { //unprotected route
+//     console.log
+//     res.send("Hello and welcome to Bibliotheca")
+// })
 
 
 
@@ -71,7 +78,7 @@ app.get('/', async (req, res) => { //unprotected route
 // });
 
 // Gets the whole users table --DONE
-// app.get('/api/users', async(req, res) => {
+// app.get('/api/awesome', async(req, res) => {
    
 //     const client = await pool.connect();
     

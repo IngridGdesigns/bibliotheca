@@ -11,6 +11,14 @@ info.use(function(req, res, next) {
     next();
 })
 
+info.get('/', (req, res) => {
+    console.log('test route running')
+    const status = {
+        'Status': "Running"
+    };
+    res.send(status, 'running well here in test file');
+});
+
 info.get('/info', (req, res) => {
     console.log('test route running')
     const status = {

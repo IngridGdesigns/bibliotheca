@@ -1,16 +1,16 @@
 const express = require('express');
-const pool = require('./database'); // Import your PostgreSQL connection pool
+const pool = require('../database')// Import your PostgreSQL connection pool
 
 let api = express.Router(); 
 
-api.use(function(req, res, next) {
-    res._json = res.json;
-    res.json = function json(obj) {
-        obj.apiVersion = 1;
-        res._json(obj);
-    }
-    next();
-})
+// api.use(function(req, res, next) {
+//     res._json = res.json;
+//     res.json = function json(obj) {
+//         obj.apiVersion = 1;
+//         res._json(obj);
+//     }
+//     next();
+// })
 
 
 /*********************************************

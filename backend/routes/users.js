@@ -1,17 +1,17 @@
 const express = require('express');
 const bcrypt = require('bcryptjs')
-const pool = require('./database');
+const pool = require('../database')
 
 let api = express.Router(); //to create modular mountable route handlers
 
-api.use(function(req, res, next) {
-    res._json = res.json;
-    res.json = function json(obj) {
-        obj.apiVersion = 1;
-        res._json(obj);
-    }
-    next();
-})
+// api.use(function(req, res, next) {
+//     res._json = res.json;
+//     res.json = function json(obj) {
+//         obj.apiVersion = 1;
+//         res._json(obj);
+//     }
+//     next();
+// })
 
 // CREATE TABLE users (
 //     member_id integer DEFAULT nextval('library_member_member_id_seq'::regclass) PRIMARY KEY,
