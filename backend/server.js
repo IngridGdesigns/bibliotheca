@@ -1,10 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser') //parsing body
 const cors = require('cors') //cors
-const morgan = require('morgan');//HTTP reques logger middleware, generates logs for API request
+const morgan = require('morgan');//HTTP request logger middleware, generates logs for API request
 const helmet = require('helmet');// security middleware
-require('dotenv').config({debug: true}) //to use process.env
+const pool = require('./db'); // Import your PostgreSQL connection pool
+const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
 
+require('dotenv').config({ debug: true }) //to use process.env
 
 const PORT = process.env.PORT || 3001;
 const AUDIENCE = process.env.Auth0_AUDIENCE || '';
@@ -19,32 +21,15 @@ app.use(morgan('dev'));
 app.use(helmet());
 app.use(cors());
 
-//require posgresql
-const Pool = require('pg').Pool;
-
-//Postgresql connection configuration
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
-    port: 5432,
-})
-
-pool.on('error', (error) => {
-    console.error('Unexpected error on idle client', error);
-    process.exit(-1); // Exit the application on error
-});
-
-
 app.use('/api/users', require('./routes/users')); //http://localhost:3001/api/users
 app.use('/api/authors', require('./routes/authors'))
 app.use('/api/books', require('./routes/books'))
+app.use('/api/book-copies', require('./routes/copies'))
 app.use('/test', require('./routes/testInfo')) //http://localhost:3001/test/info should show data
 
 
 // TURNED OFF AUTH to test endpoints for now - WIP
-// const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+
 
 
 // Authorization middleware. When used, the Access Token must
