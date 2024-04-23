@@ -1,5 +1,5 @@
 const express = require('express');
-const pool = require('./db'); // Import your PostgreSQL connection pool
+const pool = require('./database'); // Import your PostgreSQL connection pool
 
 let api = express.api(); //to create modular mountable route handlers
 

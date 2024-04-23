@@ -1,5 +1,5 @@
 const express = require('express');
-const pool = require('./db'); // Import your PostgreSQL connection pool
+const pool = require('./database'); // Import your PostgreSQL connection pool
 
 let api = express.Router(); 
 
@@ -200,7 +200,6 @@ api.post('/add', async (req, res) => {
 // Update book by book_id
 api.put('/:book_id', async (req, res) => {
     const client = await pool.connect();
-
 
     const bookId = parseInt(req.params.book_id);
     

@@ -3,17 +3,18 @@ const bodyParser = require('body-parser') //parsing body
 const cors = require('cors') //cors
 const morgan = require('morgan');//HTTP request logger middleware, generates logs for API request
 const helmet = require('helmet');// security middleware
-const pool = require('./db'); // Import your PostgreSQL connection pool
-const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+const pool = require('./database'); // Import your PostgreSQL connection pool
+const { auth } = require('express-oauth2-jwt-bearer');
 
 require('dotenv').config({ debug: true }) //to use process.env
 
 const PORT = process.env.PORT || 3001;
 const AUDIENCE = process.env.Auth0_AUDIENCE || '';
+const DOMAIN = process.env.AUTH0_DOMAIN || '';
 
-const app = express();// instantiate express app
+const app = express(); // instantiate express app
 
-app.use(express.json()) //parse to json
+app.use(express.json()) // parse to json
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 
@@ -21,6 +22,7 @@ app.use(morgan('dev'));
 app.use(helmet());
 app.use(cors());
 
+// Establish routes
 app.use('/api/users', require('./routes/users')); //http://localhost:3001/api/users
 app.use('/api/authors', require('./routes/authors'))
 app.use('/api/books', require('./routes/books'))
@@ -29,21 +31,20 @@ app.use('/test', require('./routes/testInfo')) //http://localhost:3001/test/info
 
 
 // TURNED OFF AUTH to test endpoints for now - WIP
-
-
-
 // Authorization middleware. When used, the Access Token must
 // exist and be verified against the Auth0 JSON Web Key Set.
-// const checkJwt = auth({
-//   audience: AUDIENCE,
-//   issuerBaseURL: `https://icodenow.auth0.com/`,
-//   tokenSigningAlg: 'RS256'
-// });
+const checkJwt = auth({
+  audience: AUDIENCE,
+  issuerBaseURL: `https://${DOMAIN}/`,
+  tokenSigningAlg: 'RS256'
+});
 
 
-// app.get('/', async (req, res) => { //unprotected route
-//     res.send("Hello and welcome to Bibliotheca")
-// })
+
+app.get('/', async (req, res) => { //unprotected route
+    console.log
+    res.send("Hello and welcome to Bibliotheca")
+})
 
 
 

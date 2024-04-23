@@ -1,6 +1,8 @@
 const express = require('express');
-let api = express.Router(); //to create modular mountable route handlers
 const bcrypt = require('bcryptjs')
+const pool = require('./database');
+
+let api = express.Router(); //to create modular mountable route handlers
 
 api.use(function(req, res, next) {
     res._json = res.json;
@@ -10,24 +12,6 @@ api.use(function(req, res, next) {
     }
     next();
 })
-
-//require posgresql
-const Pool = require('pg').Pool;
-
-//Postgresql connection configuration
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
-    port: 5432,
-})
-
-pool.on('error', (error) => {
-    console.error('Unexpected error on idle client', error);
-    process.exit(-1); // Exit the application on error
-});
-
 
 // CREATE TABLE users (
 //     member_id integer DEFAULT nextval('library_member_member_id_seq'::regclass) PRIMARY KEY,
