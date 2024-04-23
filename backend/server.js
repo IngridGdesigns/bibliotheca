@@ -34,7 +34,7 @@ app.use('/api/authors', require('./routes/authors'))
 app.use('/api/books', require('./routes/books'))
 app.use('/api/book-copies', require('./routes/copies'))
 app.use('/api/publishers', require('./routes/publishers'))
-app.use('/test', require('./routes/testInfo')) //http://localhost:3001/test/info should show data
+app.use('/test', require('./routes/test')) //http://localhost:3001/test/info should show data
 
 
 // TURNED OFF AUTH to test endpoints for now - WIP
