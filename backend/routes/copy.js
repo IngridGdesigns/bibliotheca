@@ -1,7 +1,16 @@
 const express = require('express');
-const pool = require('../database')// Import your PostgreSQL connection pool
+const pool = require('../database'); // Import your PostgreSQL connection pool
 
 let api = express.Router(); 
+
+// const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+// const checkJwt = auth({
+//     audience: 'https://bibliothecaAPI',
+//     issuerBaseURL: `https://icodenow.auth0.com/`,
+//     tokenSigningAlg: 'RS256'
+// });
+
+// const checkScopes = requiredScopes('read:messages');
 
 // api.use(function(req, res, next) {
 //     res._json = res.json;
@@ -22,14 +31,16 @@ api.get('/', async (req, res) => {
     const client = await pool.connect();
 
     await client.query('SELECT * FROM book_copy', (err, result) => {
+
         if (err) {
-            console.log('you have an error');
+            console.log('error oh noes!!', err)
             res.status(500).send('Server error');
             client.release()
-        }
+        } 
         else {
-            res.status(200).json(results.rows);
-            client.release();
+            console.log('data fetched successfully');
+            res.status(200).json(result.rows) // res.json(dbitems.rows)
+            client.release()//closes database
         }
     })
 })
@@ -68,10 +79,10 @@ api.put('/:copy_id', async (req, res) => {
     const { status } = req.body;
 
   try {
-      await client.query('UPDATE book_copy SET status = $1 WHERE copy_id = $2', [status, copyId]);
+      await client.query('UPDATE book_copy SET status = $1 WHERE copy_id = $2 RETURNING *' , [status, copyId]);
       
     // Add to transaction table
-      await client.query('INSERT INTO transaction (copy_id, transaction_type, transaction_date) VALUES ($1, $2, CURRENT_TIMESTAMP)', [copyId, 'Update Status']);
+      await client.query('INSERT INTO transaction (copy_id, transaction_type, transaction_date) VALUES ($1, $2, CURRENT_TIMESTAMP) RETURNING *', [copyId, 'Update Status']);
       
         res.status(200).json(`Book copy with ID ${copyId} was updated successfully`);
     } catch (err) {
@@ -88,14 +99,14 @@ api.delete('/delete/:copy_id', async (req, res) => {
 
     const client = await pool.connect();
 
-    const bookcopy_id = parseInt(req.params.bookcopy_id);
+    const copyId = parseInt(req.params.copy_id);
 
     try {
-        await client.query('DELETE FROM book_copy WHERE copy_id = $1', [bookId]);
+        await client.query('DELETE FROM book_copy WHERE copy_id = $1', [copyId]);
 
-        console.log(`Book:${title} - ${bookId} was successfully deleted`);
+        console.log(`Book:${title} - ${copyId} was successfully deleted`);
 
-        res.status(200).send(`Books:${title} - ${bookId} was successfully deleted`);
+        res.status(200).send(`Books:${title} - ${copyId} was successfully deleted`);
 
     } catch (error) {
         console.error('Error deleting book:', error);
@@ -110,13 +121,13 @@ api.delete('/delete/:copies', async (req, res) => {
 
     const client = await pool.connect();
 
-    const bookcopy_id = parseInt(req.params.bookcopy_id);
+    const bookId = parseInt(req.params.book_id);
 
     try {
 
         await client.query('DELETE FROM book_copy WHERE book_id = $1', [bookId]);
 
-        await client.query('DELETE FROM book WHERE book_id = $1, [bookId]');
+        await client.query('DELETE FROM book WHERE book_id = $1', [bookId]);
 
         console.log(`Book:${title} - ${bookId} was successfully deleted`);
 
