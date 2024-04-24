@@ -4,6 +4,7 @@ dist
 
 # ignore env
 .env
+models/ 
 
 # Dependency directories
 node_modules/
