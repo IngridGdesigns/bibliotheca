@@ -16,12 +16,22 @@ let api = express.Router();
         Books table CRUD 
 ********************************/
 
+const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+
+// Authorization middleware. When used, the Access Token must
+// exist and be verified against the Auth0 JSON Web Key Set.
+const checkJwt = auth({
+    audience: 'https://bibliothecaAPI',
+    issuerBaseURL: `https://icodenow.auth0.com/`,
+    tokenSigningAlg: 'RS256'
+});
+
 // Gets all books table 
 api.get('/', async(req, res) => {
    
     const client = await pool.connect();
     
-    client.query('SELECT * FROM book', (err, results) => {
+    await client.query('SELECT * FROM book', (err, results) => {
 
         if (err) {
             console.log('error oh noes!!', err)
@@ -213,7 +223,7 @@ api.put('/:book_id', async (req, res) => {
         
         // Insert entry into the transaction table
         await client.query(
-            'INSERT INTO transaction (copy_id, transaction_type, transaction_date, issued_by) VALUES ($1, $2, CURRENT_TIMESTAMP, $3)',
+            'INSERT INTO transaction (copy_id, transaction_type, transaction_date, issued_by) VALUES ($1, $2, CURRENT_TIMESTAMP, $3) RETURNING *',
             [bookId, 'Update', issued_by]
         );
         

@@ -3,6 +3,15 @@ const pool = require('../database')// Import your PostgreSQL connection pool
 
 let api = express.Router(); //to create modular mountable route handlers
 
+const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+const checkJwt = auth({
+    audience: 'https://bibliothecaAPI',
+    issuerBaseURL: `https://icodenow.auth0.com/`,
+    tokenSigningAlg: 'RS256'
+});
+
+const checkScopes = requiredScopes('read:messages');
+
 // api.use(function(req, res, next) {
 //     res._json = res.json;
 //     res.json = function json(obj) {
