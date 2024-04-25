@@ -19,6 +19,11 @@ navigate to [localhost:3001](https://localhost:3001/api/public), you should see:
 {"message":"hi! you are on PORT: 3001 and live!"}
 
 ```
+1. After adding in your Express endpoints you may also test them. To make this process simple, you can use cUrl from your terminal, which should work across operating systems.
+```
+// Get book by id
+curl http://localhost:3001/api/books/items -i
+```
 1. Go to the client directory and run ```npm install```
 1. Make sure that client/package.json has the following line:
 ```"proxy": "https://localhost:3001",``` - This configuration tells React development server to proxy all API requests to backend server. It redirects to the express server
