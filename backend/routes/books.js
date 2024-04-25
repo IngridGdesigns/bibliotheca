@@ -16,15 +16,15 @@ let api = express.Router();
         Books table CRUD 
 ********************************/
 
-const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+// const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
 
 // Authorization middleware. When used, the Access Token must
 // exist and be verified against the Auth0 JSON Web Key Set.
-const checkJwt = auth({
-    audience: 'https://bibliothecaAPI',
-    issuerBaseURL: `https://icodenow.auth0.com/`,
-    tokenSigningAlg: 'RS256'
-});
+// const checkJwt = auth({
+//     audience: 'https://bibliothecaAPI',
+//     issuerBaseURL: `https://icodenow.auth0.com/`,
+//     tokenSigningAlg: 'RS256'
+// });
 
 // Gets all books table 
 api.get('/', async(req, res) => {
@@ -206,6 +206,88 @@ api.post('/add', async (req, res) => {
         client.release();
     }
 });
+
+// Endpoint to return a book
+api.post('/books/return', async (req, res) => {
+    const { transaction_id, copy_id, returned_by } = req.body;
+
+    try {
+        const client = await pool.connect();
+
+        // Start a transaction
+        await client.query('BEGIN');
+
+        // Update book copy status to "Available"
+        const updateCopyQuery = 'UPDATE book_copy SET status = $1 WHERE copy_id = $2 RETURNING *';
+        const copyStatus = 'Available';
+        const { rows: updatedCopy } = await client.query(updateCopyQuery, [copyStatus, copy_id]);
+
+        // Update library account: decrement num_checked_out_books
+        const getTransactionQuery = 'SELECT member_id FROM transaction WHERE transaction_id = $1';
+        const { rows: transactionResult } = await client.query(getTransactionQuery, [transaction_id]);
+        const member_id = transactionResult[0].member_id;
+
+        await client.query('UPDATE library_account SET num_checked_out_books = num_checked_out_books - 1 WHERE member_id = $1', [member_id]);
+
+        // Create transaction record for return
+        const insertReturnTransactionQuery = 'INSERT INTO transaction (transaction_type, copy_id, returned_by) VALUES ($1, $2, $3) RETURNING *';
+        const transactionType = 'Return';
+        const { rows: newTransaction } = await client.query(insertReturnTransactionQuery, [transactionType, copy_id, returned_by]);
+
+        // Commit the transaction
+        await client.query('COMMIT');
+
+        res.status(201).json({ updatedCopy: updatedCopy[0], newTransaction: newTransaction[0] });
+    } catch (error) {
+        // If an error occurs, rollback the transaction
+        await client.query('ROLLBACK');
+        console.error('Error returning book:', error);
+        res.status(500).send('Server error');
+    } finally {
+        // Release the client from the pool
+        client.release();
+    }
+});
+
+
+// Endpoint to loan out a book
+api.post('/loan', async (req, res) => {
+    const { member_id, copy_id, due_date, issued_by } = req.body;
+
+    try {
+        const client = await pool.connect();
+        
+        // Start a transaction
+        await client.query('BEGIN');
+
+        // Update book copy status
+        const updateCopyQuery = 'UPDATE book_copy SET status = $1 WHERE copy_id = $2 RETURNING *';
+        const copyStatus = 'Borrowed';
+        const { rows: updatedCopy } = await client.query(updateCopyQuery, [copyStatus, copy_id]);
+        
+        // Update library account: increment num_checked_out_books
+        await client.query('UPDATE library_account SET num_checked_out_books = num_checked_out_books + 1 WHERE member_id = $1', [member_id]);
+
+        // Create transaction record
+        const insertTransactionQuery = 'INSERT INTO transaction (member_id, copy_id, transaction_type, due_date, issued_by) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        const transactionType = 'Loan';
+        const { rows: newTransaction } = await client.query(insertTransactionQuery, [member_id, copy_id, transactionType, due_date, issued_by]);
+
+        // Commit the transaction
+        await client.query('COMMIT');
+
+        res.status(201).json({ updatedCopy: updatedCopy[0], newTransaction: newTransaction[0] });
+    } catch (error) {
+        // If an error occurs, rollback the transaction
+        await client.query('ROLLBACK');
+        console.error('Error loaning out book:', error);
+        res.status(500).send('Server error');
+    } finally {
+        // Release the client from the pool
+        client.release();
+    }
+});
+
 
 // Update book by book_id
 api.put('/:book_id', async (req, res) => {

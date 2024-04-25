@@ -71,6 +71,26 @@ api.get('/:copy_id', async (req, res) => {
     })
 })
 
+// create a book copy
+api.post('/add', async (req, res) => {
+  const { book_id, copy_number, status } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    const queryText = 'INSERT INTO book_copy (book_id, copy_number, status) VALUES ($1, $2, $3) RETURNING *';
+    const values = [book_id, copy_number, status || 'Available']; // If status is not provided, default to 'Available'
+
+    const result = await client.query(queryText, values);
+
+    res.status(201).json(result.rows[0]);
+    client.release();
+  } catch (error) {
+    console.error('Error creating book copy:', error);
+    res.status(500).send('Server error');
+  }
+});
+
 // edit status of copy id
 api.put('/:copy_id', async (req, res) => {
     const client = await pool.connect();
@@ -104,9 +124,7 @@ api.delete('/delete/:copy_id', async (req, res) => {
     try {
         await client.query('DELETE FROM book_copy WHERE copy_id = $1', [copyId]);
 
-        console.log(`Book:${title} - ${copyId} was successfully deleted`);
-
-        res.status(200).send(`Books:${title} - ${copyId} was successfully deleted`);
+        res.status(200).send(`Books- ${copyId} was successfully deleted`);
 
     } catch (error) {
         console.error('Error deleting book:', error);
