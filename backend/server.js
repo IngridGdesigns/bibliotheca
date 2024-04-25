@@ -1,72 +1,121 @@
 require('dotenv').config({ debug: true }) //to use process.env
 const express = require('express');
+const request = require('request');
 const bodyParser = require('body-parser') //parsing body
 const cors = require('cors') //cors
 const helmet = require('helmet');// security middleware
 const morgan = require('morgan');//HTTP request logger middleware, generates logs for API request
 const app = express();
+const cookieParser = require('cookie-parser')
 
 const PORT = process.env.PORT || 3001;
 
-// // implement middleware
+const {
+  AUTH0_CLIENT_ID,
+  AUTH0_CLIENT_SECRET,
+  AUTH0_AUDIENCE,
+  AUTH0_DOMAIN } = process.env
+
+if (!AUTH0_AUDIENCE || !AUTH0_CLIENT_ID || !AUTH0_CLIENT_SECRET) {
+  throw new Error('Environment variables are missing!');
+}
+
 app.use(express.json()) // parse to json
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 
 app.use(morgan('dev'));
 app.use(helmet());
+const appPort = 3001;
+const appOrigin = { origin: `https://localhost:${appPort}`};
 
-const appOrigin = { origin: `http://localhost:${appPort}`};
-app.use(cors(appOrigin));
+app.use(cookieParser())
+
+// Allows FRONTEND application to make HTTP requests to Express application
+// app.use((req, res, next) => {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     app.use(cors(appOrigin));
+//     next();
+// });
+
+app.use(cors());
 
 const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+
 const checkJwt = auth({
-    audience: 'https://bibliothecaAPI',
-    issuerBaseURL: `https://icodenow.auth0.com/`,
+    audience: `${AUTH0_AUDIENCE}`,
+    issuerBaseURL: `https://${AUTH0_DOMAIN}/`,
     tokenSigningAlg: 'RS256'
 });
 
 const checkScopes = requiredScopes('read:messages');
 
+const userRoutes = require('./routes/users');
+const authorRoutes = require('./routes/authors');
+const bookRoutes = require('./routes/books');
+const bookCopyRoutes = require('./routes/copy');
+const publisherRoutes = require('./routes/publishers');
+const testRoute = require('./routes/test');
+
 // // Import routes
-app.use('/api/users', require('./routes/users')); //http://localhost:3001/api/users
-app.use('/api/authors', require('./routes/authors'));
-app.use('/api/books', require('./routes/books'));
-app.use('/api/book-copies', require('./routes/copy'));
-app.use('/api/publishers', require('./routes/publishers'));
-app.use('/test', require('./routes/test')); //http://localhost:3001/test/info should show data
+app.use('/api/users', userRoutes); //http://localhost:3001/api/users
+app.use('/api/authors', authorRoutes);
+app.use('/api/books', bookRoutes);
+app.use('/api/book-copies', bookCopyRoutes);
+app.use('/api/publishers', publisherRoutes);
+app.use('/test', testRoute); //http://localhost:3001/test/info should show data
 
-// This route doesn't need authentication
-app.get('/api/public', (req, res) => {
-  res.json({
-    message: 'Hello from a public endpoint! You don\'t need to be authenticated to see this.'
-  });
-});
 
-app.get('/profile', (req, res) => {
-    console.log(req);
-})
+
+
+
+
+// Set up all API routes
+// const router = require('./routes/index');
+
+// Use all API routes
+// app.use('/api', router)
+// app.get('/hello', (req, res) => {
+//   res.json({
+//     message: `hi! you are on PORT: ${PORT} and live!`
+//   })
+// })
 
 // // This route doesn't need authentication
-app.get('/api/public', function(req, res) {
-  res.json({
-    message: 'Hello from a public endpoint! You don\'t need to be authenticated to see this.'
-  });
-});
+// app.get('/api/public', (req, res) => {
+//   res.json({
+//     message: 'Hello from a public endpoint! You don\'t need to be authenticated to see this.'
+//   });
+// });
 
-// This route needs authentication
-app.get('/api/protected', checkJwt, (req, res) => {
-  res.json({
-    message: 'Hello from a private endpoint! You need to be authenticated to see this.'
-  });
-});
+// app.get('/profile', (req, res) => {
+//     console.log(req);
+// })
 
-app.get('/api/private-scoped', checkJwt, (req, res) => {
-  res.json({
-    message: 'Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this.'
-  });
-});
+// // This route needs authentication
+// app.get('/api/protected', checkJwt, (req, res) => {
+//   res.json({
+//     message: 'Hello from a private endpoint! You need to be authenticated to see this.'
+//   });
+// });
+
+// app.get('/api/private-scoped', checkJwt, (req, res) => {
+//   res.json({
+//     message: 'Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this.'
+//   });
+// });
 
 app.listen(PORT, () => {
   console.log(`Listening on ${PORT}`);
 });
+
+
+// var axios = require("axios").default;
+// const { ManagementClient } = require('auth0');
+// const management = new ManagementClient({
+//   domain: AUTH0_DOMAIN, 
+//   clientId: AUTH0_CLIENT_ID,
+//   clientSecret: AUTH0_CLIENT_SECRET,
+// });
+
+// console.log(management)
