@@ -1,6 +1,6 @@
 require('dotenv').config({ debug: true }) //to use process.env
 const express = require('express');
-const request = require('request');
+// const request = require('request');
 const bodyParser = require('body-parser') //parsing body
 const cors = require('cors') //cors
 const helmet = require('helmet');// security middleware
@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 app.use(helmet());
 const appPort = 3001;
-const appOrigin = { origin: `https://localhost:${appPort}`};
+// const appOrigin = { origin: `https://localhost:${appPort}`};
 
 app.use(cookieParser())
 
@@ -50,21 +50,10 @@ const checkJwt = auth({
 
 const checkScopes = requiredScopes('read:messages');
 
-const userRoutes = require('./routes/users');
-const authorRoutes = require('./routes/authors');
-const bookRoutes = require('./routes/books');
-const bookCopyRoutes = require('./routes/copy');
-const publisherRoutes = require('./routes/publishers');
-const testRoute = require('./routes/test');
-
 // // Import routes
-app.use('/api/users', userRoutes); //http://localhost:3001/api/users
-app.use('/api/authors', authorRoutes);
-app.use('/api/books', bookRoutes);
-app.use('/api/book-copies', bookCopyRoutes);
-app.use('/api/publishers', publisherRoutes);
-app.use('/test', testRoute); //http://localhost:3001/test/info should show data
+const library = require('./routes/allRoutes');
 
+app.use(library)
 
 
 
