@@ -1,12 +1,12 @@
 require('dotenv').config({ debug: true }) //to use process.env
 const express = require('express');
-// const request = require('request');
 const bodyParser = require('body-parser') //parsing body
 const cors = require('cors') //cors
 const helmet = require('helmet');// security middleware
 const morgan = require('morgan');//HTTP request logger middleware, generates logs for API request
 const app = express();
 const cookieParser = require('cookie-parser')
+const database = require('./models/books');  //testing new routes
 
 const PORT = process.env.PORT || 3001;
 
@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 
 app.use(morgan('dev'));
 app.use(helmet());
-const appPort = 3001;
+// const appPort = 3001;
 // const appOrigin = { origin: `https://localhost:${appPort}`};
 
 app.use(cookieParser())
@@ -40,6 +40,15 @@ app.use(cookieParser())
 
 app.use(cors());
 
+// const pool = require('./database')// Import your PostgreSQL connection pool
+
+// app.use(function (req, res, next) {
+//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers');
+//   next();
+// });
+
 const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
 
 const checkJwt = auth({
@@ -48,15 +57,28 @@ const checkJwt = auth({
     tokenSigningAlg: 'RS256'
 });
 
-const checkScopes = requiredScopes('read:messages');
+// const checkScopes = requiredScopes('read:messages');
+
 
 // // Import routes
-const library = require('./routes/allRoutes');
+// const library = require('./routes/allRoutes');
 
-app.use(library)
+app.get('/', (request, response) => {
+  response.json({ info: 'Node.js, Express, and Postgres API' })
+})
+
+app.get('/getawesome', database.getBooks);
+
+app.get('/api/private-scoped', checkJwt, (req, res) => {
+  res.json({
+    message: 'Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this.'
+  });
+});
+
+// app.use(library)
 
 
-app.get("/api/external", checkJwt, (req, res) => {
+app.get("/api/external", (req, res) => {
   res.send({
     msg: "Your access token was successfully validated!",
   });
@@ -68,11 +90,7 @@ app.get("/api/external", checkJwt, (req, res) => {
 
 // Use all API routes
 // app.use('/api', router)
-// app.get('/hello', (req, res) => {
-//   res.json({
-//     message: `hi! you are on PORT: ${PORT} and live!`
-//   })
-// })
+
 
 // // This route doesn't need authentication
 // app.get('/api/public', (req, res) => {
@@ -92,11 +110,7 @@ app.get("/api/external", checkJwt, (req, res) => {
 //   });
 // });
 
-// app.get('/api/private-scoped', checkJwt, (req, res) => {
-//   res.json({
-//     message: 'Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this.'
-//   });
-// });
+
 
 app.listen(PORT, () => {
   console.log(`Listening on ${PORT}`);
