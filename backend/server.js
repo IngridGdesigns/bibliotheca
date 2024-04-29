@@ -56,7 +56,11 @@ const library = require('./routes/allRoutes');
 app.use(library)
 
 
-
+app.get("/api/external", checkJwt, (req, res) => {
+  res.send({
+    msg: "Your access token was successfully validated!",
+  });
+});
 
 
 // Set up all API routes
