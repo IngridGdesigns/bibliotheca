@@ -1,26 +1,5 @@
-const express = require('express');
 const bcrypt = require('bcryptjs')
 const pool = require('../database')
-
-let api = express.Router(); //to create modular mountable route handlers
-
-const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
-const checkJwt = auth({
-    audience: 'https://bibliothecaAPI',
-    issuerBaseURL: `https://icodenow.auth0.com/`,
-    tokenSigningAlg: 'RS256'
-});
-
-const checkScopes = requiredScopes('read:messages');
-
-// api.use(function(req, res, next) {
-//     res._json = res.json;
-//     res.json = function json(obj) {
-//         obj.apiVersion = 1;
-//         res._json(obj);
-//     }
-//     next();
-// })
 
 // CREATE TABLE users (
 //     member_id integer DEFAULT nextval('library_member_member_id_seq'::regclass) PRIMARY KEY,
@@ -35,7 +14,7 @@ const checkScopes = requiredScopes('read:messages');
 ********************************/
 
 // Gets all users table 
-api.get('/', async(req, res) => {
+const getUsers = async (req, res) => {
    
     const client = await pool.connect();
     
@@ -44,18 +23,18 @@ api.get('/', async(req, res) => {
         if (err) {
             console.log('error oh noes!!', err)
             res.status(500).send('Server error');
-            client.release()
+            client.release();
         } 
         else {
             console.log('data fetched successfully');
-            res.status(200).json(results.rows) // res.json(dbitems.rows)
-            client.release()//closes database
+            res.status(200).json(results.rows);
+            client.release();
         }
     })
-})
+}
 
 // get user by id
-api.get('/:member_id', async (req, res) => {
+const getUserById = async (req, res) => {
     const client = await pool.connect();
 
     let id = parseInt(req.params.member_id);
@@ -70,10 +49,10 @@ api.get('/:member_id', async (req, res) => {
           client.release()
       }
     })
-})
+}
 
 // add new user
-api.post('/', async (req, res) => {
+const createUser = async (req, res) => {
     const client = await pool.connect();
 
     let name = req.body.name;
@@ -95,10 +74,10 @@ api.post('/', async (req, res) => {
                 client.release()
             }
     })
-})
+}
 
 // update user by member_id
-api.put('/:member_id', async (req, res) => {
+const updateUserById = async (req, res) => {
     const client = await pool.connect();
     const memberId = parseInt(req.params.member_id);
     
@@ -116,10 +95,10 @@ api.put('/:member_id', async (req, res) => {
     } finally {
         client.release()
     }
-})
+}
 
 // delete by user member id
-api.delete('/:member_id', async (req, res) => {
+const deleteUser = async (req, res) => {
     const client = await pool.connect();
     const memberId = parseInt(req.params.member_id);
     const name = req.params.name;
@@ -138,7 +117,13 @@ api.delete('/:member_id', async (req, res) => {
            client.release()
        }
    })
-})
+}
 
 
-module.exports = api;
+module.exports = {
+    getUsers,
+    getUserById,
+    createUser,
+    updateUserById,
+    deleteUser
+};

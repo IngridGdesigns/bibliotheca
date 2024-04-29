@@ -1,6 +1,14 @@
+const pool = require('../database'); // Import your PostgreSQL connection pool
+
+
+/*********************************************
+        
+    Transactions table CRUD 
+
+**********************************************/
 
 // Read all transactions with associated book and user information
-api.get('/transaction', async (req, res) => {
+const getTransactions = async (req, res) => {
     try {
         const client = await pool.connect();
         const queryText = `
@@ -15,11 +23,10 @@ api.get('/transaction', async (req, res) => {
         console.error('Error fetching transactions:', error);
         res.status(500).send('Server error');
     }
-});
-
+};
 
 // Create new transaction
-api.post('/add', async (req, res) => {
+const createTransaction = async (req, res) => {
     const { member_id, copy_id, transaction_type, due_date, issued_by, fine_id } = req.body;
 
     try {
@@ -32,10 +39,10 @@ api.post('/add', async (req, res) => {
         console.error('Error creating transaction:', error);
         res.status(500).send('Server error');
     }
-});
+};
 
 // update transaction by ID
-api.put('/:transaction_id', async (req, res) => {
+const updateTransaction = async (req, res) => {
     const transactionId = req.params.transaction_id;
     const { member_id, copy_id, transaction_type, due_date, issued_by, fine_id } = req.body;
 
@@ -54,18 +61,25 @@ api.put('/:transaction_id', async (req, res) => {
         console.error('Error updating transaction:', error);
         res.status(500).send('Server error');
     }
-});
+};
 
-// Delete transaction
-api.delete('/transaction/delete/:transaction_id', async (req, res) => {
-    const transactionId = req.params.transaction_id;
+// // Delete transaction
+// const delete('/transaction/delete/:transaction_id', async (req, res) => {
+//     const transactionId = req.params.transaction_id;
 
-    try {
-        const client = await pool.connect();
-        await client.query('DELETE FROM transaction WHERE transaction_id = $1', [transactionId]);
-        res.status(204).send();
-    } catch (error) {
-        console.error('Error deleting transaction:', error);
-        res.status(500).send('Server error');
-    }
-});
+//     try {
+//         const client = await pool.connect();
+//         await client.query('DELETE FROM transaction WHERE transaction_id = $1', [transactionId]);
+//         res.status(204).send();
+//     } catch (error) {
+//         console.error('Error deleting transaction:', error);
+//         res.status(500).send('Server error');
+//     }
+// });
+
+module.exports = {
+    getTransactions,
+    createTransaction,
+    updateTransaction
+
+}

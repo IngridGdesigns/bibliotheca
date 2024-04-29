@@ -1,11 +1,11 @@
-const express = require('express');
-const pool = require('../database'); // Import your PostgreSQL connection pool
+const pool = require('../database');
 
-let api = express.Router();
-
+/********************************
+        Staff library table CRUD 
+********************************/
 
 // Read all library staff members
-api.get('/', async (req, res) => {
+const getAllStaffMembers = async (req, res) => {
     try {
         const client = await pool.connect();
         const { rows } = await client.query('SELECT * FROM library_staff');
@@ -14,10 +14,10 @@ api.get('/', async (req, res) => {
         console.error('Error fetching library staff:', error);
         res.status(500).send('Server error');
     }
-});
+};
 
 // Create new library staff
-api.post('/add', async (req, res) => {
+const createStaffMember = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     try {
@@ -30,12 +30,11 @@ api.post('/add', async (req, res) => {
         console.error('Error creating library staff:', error);
         res.status(500).send('Server error');
     }
-});
+};
 
-
-// Update library staff member
-api.put('/:staff_id', async (req, res) => {
-    const staff_id = req.params.staff_id;
+// Update library staff member 
+const updateStaffInfo =  async (req, res) => {
+    const staff_id = parseInt(req.params.staff_id);
     const { name, email, password, role } = req.body;
 
     try {
@@ -48,20 +47,24 @@ api.put('/:staff_id', async (req, res) => {
         console.error('Error updating library staff:', error);
         res.status(500).send('Server error');
     }
-});
+};
 
 // Delete library staff member
-api.delete('/:staff_id', async (req, res) => {
-    const staff_id = req.params.staff_id;
+// const  .delete('/:staff_id', async (req, res) => {
+//     const staff_id = req.params.staff_id;
 
-    try {
-        const client = await pool.connect();
-        await client.query('DELETE FROM library_staff WHERE staff_id = $1', [staff_id]);
-        res.status(204).send();
-    } catch (error) {
-        console.error('Error deleting library staff:', error);
-        res.status(500).send('Server error');
-    }
-});
+//     try {
+//         const client = await pool.connect();
+//         await client.query('DELETE FROM library_staff WHERE staff_id = $1', [staff_id]);
+//         res.status(204).send();
+//     } catch (error) {
+//         console.error('Error deleting library staff:', error);
+//         res.status(500).send('Server error');
+//     }
+// });
 
-module.exports = api;
+module.exports = {
+    getAllStaffMembers,
+    createStaffMember,
+    updateStaffInfo
+}
