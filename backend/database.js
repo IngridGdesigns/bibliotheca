@@ -10,6 +10,8 @@ const pool = new Pool({
     port: 5432,
 })
 
+
+
 pool.on('error', (error) => {
     console.error('Unexpected error on idle client', error);
     process.exit(-1); // Exit the application on error
