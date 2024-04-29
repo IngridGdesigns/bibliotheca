@@ -3,12 +3,19 @@
 dist
 
 # ignore env
+# dotenv environment variables file
 .env
+.env.test
+.env.production
+
+# ignore sql notes and old schemas
 v1.sql
 v2.sql
 
 # Dependency directories
 node_modules/
+
+
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
@@ -18,6 +25,9 @@ node_modules/
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
 
 # Directories potentially created on remote AFP share
 .AppleDB
@@ -37,6 +47,9 @@ yarn-error.log*
 # Optional npm cache directory
 .npm
 
+# Optional eslint cache
+.eslintcache
+
 ### OSX ###
 *.DS_Store
 .AppleDouble
@@ -52,6 +65,14 @@ Thumbs.db
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
 
 # Local History for Visual Studio Code
 .history/
