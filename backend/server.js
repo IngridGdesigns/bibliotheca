@@ -7,12 +7,18 @@ const morgan = require('morgan');//HTTP request logger middleware, generates log
 const app = express();
 const cookieParser = require('cookie-parser')
 const database = require('./models/books');  //testing new routes
+const { messagesRouter } = require("./messages/messages.router");
+const { errorHandler } = require("./middleware/error.middleware");
+const { notFoundHandler } = require("./middleware/not-found.middleware");
+const { auth, requiredScopes } = require('express-oauth2-jwt-bearer'); // AUTH0
+const apiRouter = express.Router();
 
 const PORT = process.env.PORT || 3001;
 
 const {
   AUTH0_CLIENT_ID,
   AUTH0_CLIENT_SECRET,
+  AUTH0_CLIENT_ORIGIN_URL,
   AUTH0_AUDIENCE,
   AUTH0_DOMAIN } = process.env
 
@@ -21,35 +27,26 @@ if (!AUTH0_AUDIENCE || !AUTH0_CLIENT_ID || !AUTH0_CLIENT_SECRET) {
 }
 
 app.use(express.json()) // parse to json
+app.set("json spaces", 2);
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
-
 app.use(morgan('dev'));
 app.use(helmet());
-// const appPort = 3001;
-// const appOrigin = { origin: `https://localhost:${appPort}`};
-
 app.use(cookieParser())
+app.use(cors()); // enable cors for all origins, could be modified to only one
 
-// Allows FRONTEND application to make HTTP requests to Express application
-// app.use((req, res, next) => {
-//     res.header('Access-Control-Allow-Origin', '*');
-//     app.use(cors(appOrigin));
-//     next();
-// });
-
-app.use(cors());
 
 // const pool = require('./database')// Import your PostgreSQL connection pool
 
-// app.use(function (req, res, next) {
-//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
-//   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers');
-//   next();
-// });
+app.use((req, res, next) => {
+  res.contentType("application/json; charset=utf-8");
+  // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001'); //set for testing
+  // res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  // res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers');
+  next();
+});
 
-const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+
 
 const checkJwt = auth({
     audience: `${AUTH0_AUDIENCE}`,
@@ -57,32 +54,36 @@ const checkJwt = auth({
     tokenSigningAlg: 'RS256'
 });
 
-// const checkScopes = requiredScopes('read:messages');
+const checkScopes = requiredScopes('read:messages');
 
 
 // // Import routes
 // const library = require('./routes/allRoutes');
+app.use("/api", apiRouter);
+apiRouter.use("/messages", messagesRouter);
+
+app.use(errorHandler);
+app.use(notFoundHandler);
 
 app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres API' })
 })
 
-app.get('/getawesome', database.getBooks);
+// app.get('/getawesome', database.getBooks);
 
-app.get('/api/private-scoped', checkJwt, (req, res) => {
-  res.json({
-    message: 'Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this.'
-  });
-});
+// app.get('/api/private-scoped', checkJwt, (req, res) => {
+//   res.json({
+//     message: 'Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this.'
+//   });
+// });
 
 // app.use(library)
 
-
-app.get("/api/external", (req, res) => {
-  res.send({
-    msg: "Your access token was successfully validated!",
-  });
-});
+// app.get("/api/external", (req, res) => {
+//   res.send({
+//     msg: "Your access token was successfully validated!",
+//   });
+// });
 
 
 // Set up all API routes
@@ -104,11 +105,11 @@ app.get("/api/external", (req, res) => {
 // })
 
 // // This route needs authentication
-// app.get('/api/protected', checkJwt, (req, res) => {
-//   res.json({
-//     message: 'Hello from a private endpoint! You need to be authenticated to see this.'
-//   });
-// });
+app.get('/api/protected-site', checkJwt, (req, res) => {
+  res.json({
+    message: 'Hello from a private endpoint! You need to be authenticated to see this.'
+  });
+});
 
 
 
@@ -116,6 +117,15 @@ app.listen(PORT, () => {
   console.log(`Listening on ${PORT}`);
 });
 
+// const appPort = 3001;
+// const appOrigin = { origin: `https://localhost:${appPort}`};
+
+// Allows FRONTEND application to make HTTP requests to Express application
+// app.use((req, res, next) => {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     app.use(cors(appOrigin));
+//     next();
+// });
 
 // var axios = require("axios").default;
 // const { ManagementClient } = require('auth0');
