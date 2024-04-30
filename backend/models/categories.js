@@ -10,7 +10,7 @@ const pool = require('../database')// Import your PostgreSQL connection pool
 const getCategories = async (req, res) => {
    
     const client = await pool.connect();
-    
+
     client.query('SELECT * FROM category', (err, results) => {
         if (err) {
             console.log('error oh noes!!', err)
@@ -109,7 +109,7 @@ const updateCategoryById = async (req, res) => {
 //    })
 // })
 
-module.exports = {
+module.exports =  {
     getCategories,
     getCategoryById,
     createCategory,

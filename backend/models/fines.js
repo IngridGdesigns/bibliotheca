@@ -43,7 +43,7 @@ const getfinesByMemberId = async (req, res) => {
 
 // Update fine, add transaction for fine payment:fine_id/pay
 const userPayFine = async (req, res) => {
-    const fine_id = req.params.fine_id;
+    const fine_id = parseInt(req.params.fine_id);
     const { amount_paid } = req.body; // create form to get amount
 
     try {
@@ -128,7 +128,7 @@ const createDamagedOrLostFee = async (req, res) => {
 
 // Update fine
 const updateFine = async (req, res) => {
-    const fine_id = req.params.fine_id;
+    const fine_id = parseInt(req.params.fine_id);
     const { amount, reason, member_id, copy_id } = req.body;
     const issued_by = 'Auth0' //autho person
 
@@ -154,7 +154,7 @@ const updateFine = async (req, res) => {
 
 // delete fine
 const deleteFine = async (req, res) => {
-    const fine_id = req.params.fine_id;
+    const fine_id = parseInt(req.params.fine_id);
 
     try {
         const client = await pool.connect();

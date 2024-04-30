@@ -1,4 +1,3 @@
-const express = require('express');
 const pool = require('../database');
 
 /*************************************
@@ -7,7 +6,7 @@ const pool = require('../database');
 
 // get account info by account_id and joining fines table
 const getUserAccountById = async (req, res) => {
-    const accountId = req.params.account_id;
+    const accountId = parseInt(req.params.account_id);
     try {
         const client = await pool.connect();
         const queryText = `SELECT la.*, SUM(f.amount) AS total_fines
@@ -60,7 +59,7 @@ const getUserLibraryAccountWithFines =  async (req, res) => {
 // CREATE operation
 // create new library account
 const createNewLibraryAccount =  async (req, res) => {
-    const { member_id} = req.body.member_id;
+    const member_id = parseInt(req.body.member_id);
 
     try {
         const client = await pool.connect();
@@ -81,8 +80,8 @@ const createNewLibraryAccount =  async (req, res) => {
 
 // UPDATE operation
 const getNewLibraryCard =  async (req, res) => {
-    const accountId = req.params.account_id;
-    let card_number = req.body.card_number;
+    const accountId = parseInt(req.params.account_id);
+    const card_number = req.body.card_number;
     try {
         const client = await pool.connect();
 
@@ -109,7 +108,7 @@ const getNewLibraryCard =  async (req, res) => {
 
 // Update library account
 const updateLibraryAccount = async (req, res) => { //not for user
-    const account_id = req.params.account_id;
+    const account_id = parseInt(req.params.account_id);
     const { member_id, card_number, num_checked_out_books, fines_to_pay, make_payment } = req.body;
 
     try {
@@ -125,8 +124,8 @@ const updateLibraryAccount = async (req, res) => { //not for user
 };
 
 // DELETE operation
-const deleteLibraryAccount =  async (req, res) => {
-    const accountId = req.params.account_id;
+const deleteLibraryAccountById =  async (req, res) => {
+    const accountId = parseInt(req.params.account_id);
     try {
         const client = await pool.connect();
         const queryText = 'DELETE FROM library_account WHERE account_id = $1';
@@ -145,6 +144,8 @@ module.exports = {
     createNewLibraryAccount,
     getUserLibraryAccountWithFines,
     getNewLibraryCard,
+    
+    //admin only
     updateLibraryAccount,
-    deleteLibraryAccount
+    deleteLibraryAccountById
 }

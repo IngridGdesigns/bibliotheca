@@ -10,8 +10,8 @@ const pool = require('../database')
 const getAllHolds = async (req, res) => {
    
     const client = await pool.connect();
-    
-    client.query('SELECT * FROM holds', (err, results) => {
+
+    client.query('SELECT * FROM holds ORDER BY hold_id ASC', (err, results) => {
         // handleErrorOrReturnData();
         if (err) {
             console.log('error oh noes!!', err)
@@ -26,9 +26,8 @@ const getAllHolds = async (req, res) => {
     })
 };
 
-//for repoart
+//for repoart ? 
 const getHoldDetails = async (req, res) => {
-   
     const client = await pool.connect();
     
     client.query(
@@ -108,18 +107,22 @@ const deleteHold = async (req, res) => {
         // Fetch the member_id and book_copy_id associated with the hold
         const holdQuery = 'SELECT member_id, book_copy_id FROM holds WHERE hold_id = $1';
         const { rows } = await client.query(holdQuery, [hold_id]);
-        const member_id = rows[0].member_id;
+        // const member_id = rows[0].member_id;
         const book_copy_id = rows[0].book_copy_id;
 
         // Delete the hold
         await client.query('DELETE FROM holds WHERE hold_id = $1', [hold_id]);
 
         // // Check if the member has any remaining holds
-        // const remainingHoldsQuery = 'SELECT COUNT(*) FROM holds WHERE member_id = $1';
-        // const { rows: holdCount } = await client.query(remainingHoldsQuery, [member_id]);
-        // const hasHolds = parseInt(holdCount[0].count) > 0;
+        const remainingHoldsQuery = 'SELECT COUNT(*) FROM holds WHERE member_id = $1';
+        const { rows: holdCount } = await client.query(remainingHoldsQuery, [member_id]);
+        const hasHolds = parseInt(holdCount[0].count) > 0;
 
-        // update book status to 'Available'
+              // update book status to 'Available'
+        await client.query(
+            'UPDATE book_copy SET status = \'Available\' WHERE copy_id = $1',
+            [book_copy_id]
+        );
 
         res.status(204).end();
     } catch (error) {
@@ -156,6 +159,11 @@ module.exports = {
     deleteHold,
     getAllBooksaAndMemberPlacingHolds
 }
+
+
+
+
+
 
 // // Create a new hold
 // api.post('/holds/add', async (req, res) => {

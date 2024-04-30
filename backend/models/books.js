@@ -1,6 +1,14 @@
-const pool = require('../database') // Import your PostgreSQL connection pool
+const pool = require('../database')// Import your PostgreSQL connection pool
 
-
+// // Helper function to handle database queries
+// const query = async (text, params) => {
+//     const client = await pool.connect();
+//     try {
+//         return await client.query(text, params);
+//     } finally {
+//         client.release();
+//     }
+// };
 /********************************
         Books table CRUD 
 ********************************/
@@ -9,7 +17,7 @@ const pool = require('../database') // Import your PostgreSQL connection pool
 const getBooks = async (req, res) => {
     const client = await pool.connect();
 
-    await pool.query('SELECT * FROM book ORDER BY book_id ASC', (err, results) => {
+    await _query('SELECT * FROM book ORDER BY book_id ASC', (err, results) => {
 
         if (err) {
             // console.log('error oh noes!!', err)
@@ -62,8 +70,8 @@ const getBookByAuthorName = async (req, res) => {
 // Get book by publisher name ('/:publisherName', async
 const getBookByPublisher = async (req, res) => {
     const client = await pool.connect();
-
     const publisherName = req.params.publisher_name;
+
      await client.query('SELECT b.* FROM book b JOIN publisher p ON b.publisher_id = p.publisher_id WHERE p.publisher_name = $1',
         [publisherName], (err, result) => {
         
@@ -384,20 +392,17 @@ module.exports = {
     createBorrowBook,
     createRenewBook,
     createReturnBook,
-   
-
     //Admin only 
     createBook,
     createBorrowBook,
     updateBook,
-    deleteBook,
- 
+    deleteBook, 
 }
 
 
 
 // const updateBook = async (req, res) => {
-//     const client =  await pool.connect();
+//     const client =  await pool.pool.connect();
 
 //     const bookId = parseInt(req.params.book_id);
     
@@ -433,7 +438,7 @@ module.exports = {
 //     const { member_id, copy_id, due_date, issued_by } = req.body;
 
 //     try {
-//         const client =  pool.connect();
+//         const client =  pool.pool.connect();
         
 //         // Start a transaction
 //          await client.query('BEGIN');
@@ -468,7 +473,7 @@ module.exports = {
 
 // const deleteBookV1 = async (req, res) => {
 
-//     const client =  await pool.connect();
+//     const client =  await pool.pool.connect();
 
 //     const bookId = parseInt(req.params.book_id);
 //     const title = req.params.title;
