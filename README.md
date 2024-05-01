@@ -55,6 +55,7 @@ curl http://localhost:3001/api/books/items -i
 ## Auth0 Resources WIP
 
 1. [Auth API Explorer](https://auth0.com/docs/api/authentication?javascript#get-user-info)
+1. [How to make API calls to the Auth0 Management API.](https://auth0.com/docs/quickstart/spa/react/02-calling-an-api)
 1. [Getting Started with Auth0 series](https://auth0.com/docs/videos/get-started-series)
 1. Highlights:
 
@@ -96,7 +97,7 @@ curl http://localhost:3001/api/books/items -i
 };```
 
 
-# DFSKLJDF
+# 
 
 ```javascript
 
@@ -113,7 +114,17 @@ curl http://localhost:3001/api/books/items -i
  - You can curl to see your user or check client/views/External Api, you should see your role with other user info:
     ```<will insert screenshot>```
 
+// https://auth0.com/docs/api/management/v2/users/get-user-roles
+- svg https://www.svgbackgrounds.com/elements/animated-svg-preloaders/
+ - Animated SVG Preloaders by SVGBackgrounds.com<
 
+ -book icon https://icons8.com/icon/112289/book
+ https://icons8.com/icons/set/book
+ faavicon
+ 
+ - https://auth0.com/docs/manage-users/user-accounts/metadata/manage-user-metadata
+ 
+ user api - https://auth0.com/docs/api/management/v2/users/get-user-roles
 
 Milestones: 
 - In the future I would like refactor to use Vite React to improve build performance.
