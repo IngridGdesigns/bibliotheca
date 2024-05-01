@@ -14,7 +14,7 @@ v2.sql
 
 # Dependency directories
 node_modules/
-
+bloatedFolderWithComponents/ 
 
 
 # Files that might appear in the root of a volume
