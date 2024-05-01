@@ -5,6 +5,12 @@ const { AdminMessagesPermissions } = require("./messages-permissions");
 
 const messagesRouter = express.Router();
 
+messagesRouter.get("/", (req, res) => {
+  const message = getPublicMessage();
+
+  res.status(200).json(message);
+});
+
 messagesRouter.get("/public", (req, res) => {
   const message = getPublicMessage();
 

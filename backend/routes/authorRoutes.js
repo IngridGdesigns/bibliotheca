@@ -1,5 +1,3 @@
-// authorRoutes.js
-
 const express = require('express');
 const authorRouter = express.Router();
 const { getAuthors, getAuthorById, createAuthor, updateAuthor, deleteAuthor } = require('../models/authors')

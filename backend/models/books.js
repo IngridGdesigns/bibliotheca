@@ -17,7 +17,7 @@ const pool = require('../database')// Import your PostgreSQL connection pool
 const getBooks = async (req, res) => {
     const client = await pool.connect();
 
-    await _query('SELECT * FROM book ORDER BY book_id ASC', (err, results) => {
+    await client.query('SELECT * FROM book ORDER BY book_id ASC', (err, results) => {
 
         if (err) {
             // console.log('error oh noes!!', err)

@@ -96,8 +96,6 @@ const deleteAuthor = async (req, response) => {
    })
 }
 
-
-
 module.exports = {
         getAuthors,
         getAuthorById,

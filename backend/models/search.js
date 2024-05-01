@@ -1,4 +1,4 @@
-const pool = require('../database'); /
+const pool = require('../database');
 
 
 /********************************
@@ -6,3 +6,4 @@ const pool = require('../database'); /
     Search table CRUD 
 
 ********************************/
+
