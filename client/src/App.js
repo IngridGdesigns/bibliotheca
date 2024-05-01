@@ -1,41 +1,46 @@
-import './App.css';
-import { useAuth0 } from '@auth0/auth0-react';
-import UserProfile from './Components/UserProfile';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import { Container } from "reactstrap";
 
-const LoginButton = () => {
-  const { loginWithRedirect } = useAuth0();
+import { AuthenticationGuard } from "./components/authentication-guard";
+import Loading from "./components/Loading";
+import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
+import Home from "./views/Home";
+import Profile from "./views/Profile";
+import ExternalApi from "./views/ExternalApi";
+import { useAuth0 } from "@auth0/auth0-react";
 
-  return <button onClick={() => loginWithRedirect()}>Log in</button>;
-};
+// styles
+import "./App.css";
 
-const LogOutButton = () => {
-  const { logout } = useAuth0();
+const App = () => {
+  const { isLoading, error } = useAuth0();
+
+  if (error) {
+    return <div>Oops... {error.message}</div>;
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
-    <button onClick={() => logout({ logoutParams: {returnTo: window.location.origin}})}>Log out</button>
-  )
-}
-
-function App() {
-
-  // const { isAuthenticated, isLoading } = useAuth0();
-  return (
-    <div className = "App" >
-      <p>Not yet authenticated</p>
-      <LoginButton />
-      <LogOutButton />
-    
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-    <UserProfile />
-    </div>
+    <Router>
+      <div id="app" className="d-flex flex-column h-100">
+        <NavBar />
+        <Container className="flex-grow-1 mt-5">
+          <Routes>
+            <Route path="/" exact element={<Home/>} />
+              <Route path="/profile" element={<AuthenticationGuard component={Profile} />}
+          />
+          <Route path="/external-api" element={<AuthenticationGuard component={ExternalApi} />} />
+          </Routes>
+        </Container>
+        <Footer />
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
