@@ -1,19 +1,23 @@
 const { 
     getAllStaffMembers, 
+    getStaffMember,
     createStaffMember, 
     updateStaffInfo 
-} = require('../models/staffMembers');
+} = require('../models/library_staff');
 
 const express = require('express');
-const libraryStaffRouter = express.Router();
+const router = express.Router();
 
 // GET all staff members
-libraryStaffRouter.get('/', getAllStaffMembers);
+router.get('/', getAllStaffMembers);
+
+// GET staff by id
+router.get('/:staff_id', getStaffMember)
 
 // POST create a new staff member
-libraryStaffRouter.post('/create', createStaffMember);
+router.post('/create', createStaffMember);
 
 // PUT update staff information by ID
-libraryStaffRouter.put('/update/:staff_id', updateStaffInfo);
+router.put('/update/:staff_id', updateStaffInfo);
 
-module.exports = libraryStaffRouter;
+module.exports = router;

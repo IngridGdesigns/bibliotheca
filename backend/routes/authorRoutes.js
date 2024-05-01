@@ -1,20 +1,20 @@
 const express = require('express');
-const authorRouter = express.Router();
+const router = express.Router();
 const { getAuthors, getAuthorById, createAuthor, updateAuthor, deleteAuthor } = require('../models/authors')
 
 // GET all authors
-authorRouter.get('/', getAuthors);
+router.get('/', getAuthors);
 
 // GET author by ID
-authorRouter.get('/:author_id', getAuthorById);
+router.get('/:author_id', getAuthorById);
 
 // POST create new author
-authorRouter.post('/add', createAuthor);
+router.post('/add', createAuthor);
 
 // PUT update author by ID
-authorRouter.put('/edit/:author_id', updateAuthor);
+router.put('/edit/:author_id', updateAuthor);
 
 // DELETE author by ID
-authorRouter.delete('/delete/:author_id', deleteAuthor);
+router.delete('/delete/:author_id', deleteAuthor);
 
-module.exports = authorRouter;
+module.exports = router;

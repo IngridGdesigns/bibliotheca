@@ -1,5 +1,7 @@
+const express = require('express');
 const {
     getBooks,
+    getBooksWithAuthorCategoryPublisher,
     getBookById,
     getBookByAuthorName,
     getBookByPublisher,
@@ -11,40 +13,44 @@ const {
     updateBook, // Admin only 
     deleteBook // Admin only 
 } = require('../models/books');
+const router = express.Router();
 
 // GET all books
-bookRouter.get('/', getBooks);
+router.get('/', getBooks);
+
+// GET all books to display in library
+router.get('/details', getBooksWithAuthorCategoryPublisher);
 
 // GET book by ID
-bookRouter.get('/:book_id', getBookById);
+router.get('/:book_id', getBookById);
 
 // GET book by author name
-bookRouter.get('/author/:author_name', getBookByAuthorName);
+router.get('/author/:author_name', getBookByAuthorName);
 
 // GET book by publisher
-bookRouter.get('/publisher/:publisher_name', getBookByPublisher);
+router.get('/publisher/:publisher_name', getBookByPublisher);
 
 // GET book by category
-bookRouter.get('/category/:category_name', getBookByCategory);
+router.get('/category/:category_name', getBookByCategory);
 
 // POST create new borrow book
-bookRouter.post('/borrow', createBorrowBook);
+router.post('/borrow', createBorrowBook);
 
 // POST create new renew book
-bookRouter.post('/renew', createRenewBook);
+router.post('/renew', createRenewBook);
 
 // POST create new return book
-bookRouter.post('/return', createReturnBook);
+router.post('/return', createReturnBook);
 
 // Admin routes
 // POST create new book
-bookRouter.post('/add', createBook);
+router.post('/add', createBook);
 
 // PUT update book by ID
-bookRouter.put('/edit/:book_id', updateBook);
+router.put('/edit/:book_id', updateBook);
 
 // DELETE book by ID
-bookRouter.delete('/delete/:book_id', deleteBook);
+router.delete('/delete/:book_id', deleteBook);
 
 
-module.exports = bookRouter;
+module.exports = router;

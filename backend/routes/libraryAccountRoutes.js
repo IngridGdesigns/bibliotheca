@@ -1,31 +1,35 @@
 const { 
+    getAllAccounts,
     getUserAccountById, 
     createNewLibraryAccount, 
     getUserLibraryAccountWithFines, 
     getNewLibraryCard, 
     updateLibraryAccount, 
     deleteLibraryAccountById 
-} = require('../models/libraryAccounts');
+} = require('../models/libraryAccount');
 
 const express = require('express');
-const libraryAccountRouter = express.Router();
+const router = express.Router();
+
+// GET all user accounts
+router.get('/', getAllAccounts);
 
 // GET user account by ID
-libraryAccountRouter.get('/:user_id', getUserAccountById);
+router.get('/:user_id', getUserAccountById);
 
 // GET user library account with fines
-libraryAccountRouter.get('/withFines/:user_id', getUserLibraryAccountWithFines);
+router.get('/user/:user_id', getUserLibraryAccountWithFines);
 
 // GET new library card
-libraryAccountRouter.get('/newCard', getNewLibraryCard);
+router.get('/new-card', getNewLibraryCard);
 
 // POST create a new library account
-libraryAccountRouter.post('/create', createNewLibraryAccount);
+router.post('/create', createNewLibraryAccount);
 
 // PUT update library account by ID
-libraryAccountRouter.put('/update/:account_id', updateLibraryAccount);
+router.put('/update/:account_id', updateLibraryAccount);
 
 // DELETE library account by ID (admin only)
-libraryAccountRouter.delete('/delete/:account_id', deleteLibraryAccountById);
+router.delete('/delete/:account_id', deleteLibraryAccountById);
 
-module.exports = libraryAccountRouter;
+module.exports = router;

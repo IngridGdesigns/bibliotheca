@@ -16,6 +16,23 @@ const getAllStaffMembers = async (req, res) => {
     }
 };
 
+// Read all library staff members
+const getStaffMember = async (req, res) => {
+    const staff_id = parseInt(req.params.staff_id)
+
+    await client.query('SELECT * FROM library_staff WHERE staff_id =$1', [staff_id], (err, result) => {
+        if (err) {
+            res.status(500).send(err);
+            client.release()
+        }
+        else { //res.json(dbitems.rows[0] )
+            res.status(200).json(result.rows[0])
+            client.release()
+        }
+    })
+};
+
+
 // Create new library staff
 const createStaffMember = async (req, res) => {
     const { name, email, password, role } = req.body;
@@ -65,6 +82,7 @@ const updateStaffInfo =  async (req, res) => {
 
 module.exports = {
     getAllStaffMembers,
+    getStaffMember,
     createStaffMember,
     updateStaffInfo
 }

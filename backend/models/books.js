@@ -21,6 +21,33 @@ const getBooks = async (req, res) => {
 
         if (err) {
             // console.log('error oh noes!!', err)
+            res.status(500).send('Server error');
+            throw err;
+        } 
+            res.status(200).json(results.rows) // res.json(dbitems.rows)
+            client.release()//closes database
+    })
+}
+
+// get all books with library info
+const getBooksWithAuthorCategoryPublisher = async (req, res) => {
+    const client = await pool.connect();
+
+    await client.query(`SELECT b.title,
+                        b.description,
+                        a.author_name,
+                        b.isbn,
+                        b.pages,
+                        p.publisher_name,
+                        b.publication_year,
+                        b.language,
+                        c.category_name
+                        FROM book b
+                        JOIN author a ON b.book_id = a.author_id
+                        JOIN category c ON b.category_id = c.category_id
+                        JOIN publisher p ON b.publisher_id = p.publisher_id`, (err, results) => {
+        if (err) {
+            // console.log('error oh noes!!', err)
             // res.status(500).send('Server error');
             throw err;
         } 
@@ -385,6 +412,7 @@ const deleteBook = async (req, res) => {
 
 module.exports = {
     getBooks,
+    getBooksWithAuthorCategoryPublisher,
     getBookById,
     getBookByAuthorName,
     getBookByPublisher,
@@ -392,7 +420,6 @@ module.exports = {
     createBorrowBook,
     createRenewBook,
     createReturnBook,
-    //Admin only 
     createBook,
     createBorrowBook,
     updateBook,

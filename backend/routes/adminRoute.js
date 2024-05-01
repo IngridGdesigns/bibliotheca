@@ -1,4 +1,4 @@
-import express from 'express'
+const express = require('express');
 const pool = require('../database')
 
 const adminRouter = express.Router();
@@ -9,4 +9,4 @@ adminRouter.post('/admin', (req, res) => {
     console.log(req.body);
 })
 
-export default adminRouter;
+module.exports = adminRouter;

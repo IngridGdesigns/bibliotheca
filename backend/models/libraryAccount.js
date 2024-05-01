@@ -4,6 +4,21 @@ const pool = require('../database');
         library_account table CRUD 
 *************************************/
 
+const getAllAccounts = async (req, res) => {
+    const client = await pool.connect();
+
+    await client.query('SELECT * FROM library_account ORDER BY member_id ASC', (err, results) => {
+
+        if (err) {
+            // console.log('error oh noes!!', err)
+            // res.status(500).send('Server error');
+            throw err;
+        }
+        res.status(200).json(results.rows) // res.json(dbitems.rows)
+        client.release()//closes database
+    })
+}
+
 // get account info by account_id and joining fines table
 const getUserAccountById = async (req, res) => {
     const accountId = parseInt(req.params.account_id);
@@ -146,6 +161,7 @@ module.exports = {
     getNewLibraryCard,
     
     //admin only
+    getAllAccounts,
     updateLibraryAccount,
     deleteLibraryAccountById
 }

@@ -1,18 +1,17 @@
 const { getAllPublishers, getPublisherById, addPublisher, updatePublisher } = require('../models/publishers');
 const express = require('express');
-
-const publisherRouter = express.Router();
+const router = express.Router();
 
 // GET all publishers
-publisherRouter.get('/', getAllPublishers);
+router.get('/', getAllPublishers);
 
 // GET publisher by ID
-publisherRouter.get('/:publisher_id', getPublisherById);
+router.get('/:publisher_id', getPublisherById);
 
 // POST add a new publisher
-publisherRouter.post('/add', addPublisher);
+router.post('/add', addPublisher);
 
 // PUT update publisher by ID
-publisherRouter.put('/update/:publisher_id', updatePublisher);
+router.put('/update/:publisher_id', updatePublisher);
 
-module.exports = publisherRouter;
+module.exports = router;

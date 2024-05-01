@@ -1,14 +1,14 @@
 const { getTransactions, createTransaction, updateTransaction } = require('../models/transactions');
 const express = require('express');
-const transactionRouter = express.Router();
+const router = express.Router();
 
 // GET all transactions
-transactionRouter.get('/', getTransactions);
+router.get('/', getTransactions);
 
 // POST create transaction
-transactionRouter.post('/create', createTransaction);
+router.post('/create', createTransaction);
 
 // PUT update transaction by ID
-transactionRouter.put('/update/:transaction_id', updateTransaction);
+router.put('/update/:transaction_id', updateTransaction);
 
-module.exports = transactionRouter;
+module.exports = router;

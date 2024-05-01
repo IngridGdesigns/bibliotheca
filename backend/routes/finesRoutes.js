@@ -1,28 +1,31 @@
+
 const { 
     getFines, 
-    getFinesByMemberId, 
-    userPayFine, 
-    createDamagedOrLostFee, 
-    updateFine, 
-    deleteFine 
+    // getFinesByMemberId, 
+    // userPayFine, 
+    // createDamagedOrLostFee, 
+    // updateFine, 
+    // deleteFine 
 } = require('../models/fines');
+const express = require('express');
+const router = express.Router();
 
 // GET all fines
-fineRouter.get('/', getFines);
+router.get('/', getFines);
 
-// GET fines by id
-fineRouter.get('/member/:member_id', getFinesByMemberId);
+//// GET fines by id
+// router.get('/:member_id', getFinesByMemberId);
 
-// POST user pay fine
-fineRouter.post('/pay', userPayFine);
+// // POST user pay fine
+// router.put('/pay', userPayFine);
 
-// POST create new damaged/lost fee
-fineRouter.post('/create', createDamagedOrLostFee);
+// // POST create new damaged/lost fee
+// router.post('/create', createDamagedOrLostFee);
 
-// PUT update by id
-fineRouter.put('/edit/:fine_id', updateFine);
+// // PUT update by id
+// router.put('/edit/:fine_id', updateFine);
 
-// DELETE by id
-fineRouter.delete('/delete/:fine_id', deleteFine);
+// // DELETE by id
+// router.delete('/delete/:fine_id', deleteFine);
 
-module.exports = fineRouter;
+module.exports = router;

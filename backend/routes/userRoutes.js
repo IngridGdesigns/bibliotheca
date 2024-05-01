@@ -1,33 +1,27 @@
-const {
-    getUsers,
-    getUserById,
-    createUser,
-    updateUserById,
-    deleteUser
-} = require('../models/users');
+const { getUsers, getUserById, createUser, updateUserById, deleteUser } = require('../models/users');
 
-/*
+/* ********************************************************************** 
 
-    Created file need to tweak later -  I want to pull data from Auth0 to keep track of info
+    Created file need to tweak later - need to pull data from Auth0 to keep track of users
 
-*/
+****************************************************************************** */
 
 const express = require('express');
-const userRouter = express.Router();
+const router = express.Router();
 
 // GET all users
-userRouter.get('/', getUsers);
+router.get('/', getUsers);
 
 // GET user by ID
-userRouter.get('/:user_id', getUserById);
+router.get('/:user_id', getUserById);
 
 // POST create a new user
-userRouter.post('/create', createUser);
+router.post('/create', createUser);
 
 // PUT update user by ID
-userRouter.put('/update/:user_id', updateUserById);
+router.put('/update/:user_id', updateUserById);
 
 // DELETE user by ID
-userRouter.delete('/delete/:user_id', deleteUser);
+router.delete('/delete/:user_id', deleteUser);
 
-module.exports = userRouter;
+module.exports = router;

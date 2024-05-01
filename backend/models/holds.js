@@ -1,18 +1,14 @@
 const pool = require('../database')
 
-
-
 /********************************
         Holds table CRUD 
 ********************************/
 
 // Gets all holds table 
 const getAllHolds = async (req, res) => {
-   
     const client = await pool.connect();
 
     client.query('SELECT * FROM holds ORDER BY hold_id ASC', (err, results) => {
-        // handleErrorOrReturnData();
         if (err) {
             console.log('error oh noes!!', err)
             res.status(500).send('Server error');
@@ -26,16 +22,36 @@ const getAllHolds = async (req, res) => {
     })
 };
 
+const getBookDetailsofAllHolds = async(req, res) => {
+    const client = await pool.connect();
+
+    client.query(`SELECT h.*, b.title AS book_title, bc.copy_number, bc.status AS book_status
+        FROM holds h
+        JOIN book_copy bc ON h.copy_id = bc.copy_id
+        JOIN book b ON bc.book_id = b.book_id`, (err, results) => {
+         if (err) {
+            console.log('error oh noes!!', err)
+            res.status(500).send('Server error');
+            client.release()
+        }
+        else {
+            console.log('data fetched successfully');
+            res.status(200).json(results.rows) // res.json(dbitems.rows)
+            client.release()//closes database
+        }
+    })
+}
+
 //for repoart ? 
 const getHoldDetails = async (req, res) => {
     const client = await pool.connect();
-    
+   
     client.query(
         `SELECT h.*, b.title AS book_title, bc.copy_number, bc.status AS book_status
         FROM holds h
         JOIN book_copy bc ON h.copy_id = bc.copy_id
-        JOIN book b ON bc.book_id = b.book_id`, (err, results) => {
-        // handleErrorOrReturnData();
+        JOIN book b ON bc.book_id = b.book_id`, [hold_id], (err, results) => {
+       
         if (err) {
             console.log('error oh noes!!', err)
             res.status(500).send('Server error');
@@ -135,26 +151,29 @@ const deleteHold = async (req, res) => {
 // for reports
 // Read all holds with associated book and member information
 const getAllBooksaAndMemberPlacingHolds = async (req, res) => {
-    try {
-        const client = await pool.connect();
-        const queryText = `
+
+    const client = await pool.connect();
+    await client.query(`
             SELECT h.*, b.title AS book_title, u.name AS member_name
             FROM holds h
             INNER JOIN book b ON b.book_id = b.book_id
-            INNER JOIN users u ON h.member_id = u.member_id;
-        `;
-        const { rows } = await client.query(queryText);
-        res.status(200).json(rows);
-    } catch (error) {
-        console.error('Error fetching holds:', error);
-        res.status(500).send('Server error');
-    }
-};
+            INNER JOIN users u ON h.member_id = u.member_id RETURNING *`, (err, results) => {
+
+        if (err) {
+            console.log('error oh noes!!', err)
+            res.status(500).send('Server error');
+            throw err;
+        } 
+            res.status(200).json(results.rows) // res.json(dbitems.rows)
+            client.release()//closes database
+    })
+}
 
 module.exports = {
-    getAllHolds, 
-    getReservedBook,
+    getAllHolds,
+    getBookDetailsofAllHolds,
     getHoldDetails,
+    getReservedBook,
     createBookOnHold,
     deleteHold,
     getAllBooksaAndMemberPlacingHolds

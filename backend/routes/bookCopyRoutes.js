@@ -4,21 +4,23 @@ const {
     createBookCopy,
     editCopyById,
     deleteByCopyId
-} = require('../models/bookCopies');
+} = require('../models/copy');
+const express = require('express');
+const router = express.Router();
 
 // GET all book copies
-bookCopyRouter.get('/', getBookCopies);
+router.get('/', getBookCopies);
 
 // GET book copy by ID
-bookCopyRouter.get('/:copy_id', getBookCopiesById);
+router.get('/:copy_id', getBookCopiesById);
 
 // POST create new book copy
-bookCopyRouter.post('/add', createBookCopy);
+router.post('/add', createBookCopy);
 
 // PUT edit book copy by ID
-bookCopyRouter.put('/edit/:copy_id', editCopyById);
+router.put('/edit/:copy_id', editCopyById);
 
 // DELETE book copy by ID
-bookCopyRouter.delete('/delete/:copy_id', deleteByCopyId);
+router.delete('/delete/:copy_id', deleteByCopyId);
 
-module.exports = bookCopyRouter;
+module.exports = router;

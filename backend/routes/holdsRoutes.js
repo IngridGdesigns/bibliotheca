@@ -1,28 +1,36 @@
 const { 
-    getAllHolds, 
-    getReservedBook, 
-    getHoldDetails, 
-    createBookOnHold, 
-    deleteHold, 
-    getAllBooksAndMemberPlacingHolds 
+    getAllHolds,
+    getBookDetailsofAllHolds,
+    getHoldDetails,
+    getReservedBook,
+    createBookOnHold,
+    deleteHold,
+    getAllBooksaAndMemberPlacingHolds
 } = require('../models/holds');
+const express = require('express');
+const router = express.Router();
 
 // GET all holds
-holdRouter.get('/', getAllHolds);
+router.get('/', getAllHolds);
 
-// GET reserved book
-holdRouter.get('/reserved/:book_id', getReservedBook);
+// // GET reserved book
+router.get('/reserved/:book_id', getReservedBook);
 
-// GET hold details
-holdRouter.get('/:hold_id', getHoldDetails);
+// // GET hold details
+router.get('/:hold_id', getHoldDetails);
+
+// Get book detials
+router.get('./book-details', getBookDetailsofAllHolds)
+
+router.get('./member-holds', getAllBooksaAndMemberPlacingHolds)
 
 // POST create book on hold
-holdRouter.post('/create', createBookOnHold);
+router.post('/create', createBookOnHold);
 
 // DELETE hold by ID
-holdRouter.delete('/delete/:hold_id', deleteHold);
+router.delete('/delete/:hold_id', deleteHold);
 
 // GET all books and members placing holds
-holdRouter.get('/allBooksAndMembersPlacingHolds', getAllBooksAndMemberPlacingHolds);
+// router.get('/allbooks', getAllBooksAndMemberPlacingHolds);
 
-module.exports = holdRouter;
+module.exports = router;
