@@ -6,12 +6,12 @@ const helmet = require('helmet');// security middleware
 const morgan = require('morgan');//HTTP request logger middleware, generates logs for API request
 const app = express();
 const cookieParser = require('cookie-parser')
-const database = require('./models/books');  //testing new routes
-const { messagesRouter } = require("./messages/messages.router");
+// const database = require('./models/books');  //testing new routes
+// const { messagesRouter } = require("./messages/messages.router");
 const { errorHandler } = require("./middleware/error.middleware");
 const { notFoundHandler } = require("./middleware/not-found.middleware");
 const { auth, requiredScopes } = require('express-oauth2-jwt-bearer'); // AUTH0
-const apiRouter = express.Router();
+// const apiRouter = express.Router();
 
 const PORT = process.env.PORT || 3001;
 
@@ -35,9 +35,6 @@ app.use(helmet());
 app.use(cookieParser())
 app.use(cors()); // enable cors for all origins, could be modified to only one
 
-
-// const pool = require('./database')// Import your PostgreSQL connection pool
-
 app.use((req, res, next) => {
   res.contentType("application/json; charset=utf-8");
   // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001'); //set for testing
@@ -46,7 +43,16 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/hello', (req, res) => {
+  res.json({ info: 'Node.js, Express, and Postgres API, dont know if it will work' })
+})
 
+
+// // // Read all library staff members
+app.get('/', (req, res) => {
+  console.log('welcome home');
+  res.json('hello and welcome to home for now')
+});
 
 const checkJwt = auth({
     audience: `${AUTH0_AUDIENCE}`,
@@ -56,12 +62,46 @@ const checkJwt = auth({
 
 const checkScopes = requiredScopes('read:messages');
 
+// const bookRoutes = require('./routes/bookRoutes')
 
-// // Import routes
-// const library = require('./routes/allRoutes');
-app.use("/api", apiRouter);
-apiRouter.use("/messages", messagesRouter);
+// app.use('/api/bookstuff', bookRoutes)
 
+// Import - Set up all API routes
+// const adminRoute = require('./routes/adminRoute');
+const authorRoutes = require('./routes/authorRoutes')
+const bookRoutes = require('./routes/bookRoutes')
+const bookCopyRoutes = require('./routes/bookCopyRoutes')
+const categoryRoutes = require('./routes/categoryRoutes')
+// const fineRoutes = require('./routes/finesRoutes') ->  need to debug
+const holdRoutes = require('./routes/holdsRoutes')
+const libraryAccountRoutes = require('./routes/libraryAccountRoutes')
+const libraryStaff = require('./routes/libraryStaffRoutes')
+const publisherRoutes = require('./routes/publisherRoutes')
+const reportRoutes = require('./routes/reportRoutes')
+const transactionRoutes = require('./routes/transactionsRoutes')
+const userRoutes = require('./routes/userRoutes')
+
+// // Use all API routes
+app.use('/api/authors', authorRoutes);
+app.use('/api/books', bookRoutes);
+app.use('/api/book-copies', bookCopyRoutes);
+app.use('/api/category', categoryRoutes);
+// app.use('/api/fines', fineRoutes); -->  need to debug
+app.use('/api/holds', holdRoutes);
+app.use('/api/membership-accounts', libraryAccountRoutes);
+app.use('/api/staff', libraryStaff);
+app.use('/api/publishers', publisherRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/users', userRoutes);
+
+app.use('/bookstuff', bookRoutes) //testing
+
+app.get("/api/external", (req, res) => {
+  res.send({
+    msg: "Your access token was successfully validated! when you pinged",
+  });
+});
 app.use(errorHandler);
 app.use(notFoundHandler);
 
@@ -69,7 +109,17 @@ app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres API' })
 })
 
-// app.get('/getawesome', database.getBooks);
+
+
+
+
+
+// app.use("/authors", authorRoutes);
+// app.use('/api/authors', authorRoutes);
+
+// apiRouter.use("/messages", messagesRouter);
+
+app.use('/getawesome', bookRoutes);
 
 // app.get('/api/private-scoped', checkJwt, (req, res) => {
 //   res.json({
@@ -79,18 +129,6 @@ app.get('/', (request, response) => {
 
 // app.use(library)
 
-// app.get("/api/external", (req, res) => {
-//   res.send({
-//     msg: "Your access token was successfully validated!",
-//   });
-// });
-
-
-// Set up all API routes
-// const router = require('./routes/index');
-
-// Use all API routes
-// app.use('/api', router)
 
 
 // // This route doesn't need authentication
@@ -105,11 +143,11 @@ app.get('/', (request, response) => {
 // })
 
 // // This route needs authentication
-app.get('/api/protected-site', checkJwt, (req, res) => {
-  res.json({
-    message: 'Hello from a private endpoint! You need to be authenticated to see this.'
-  });
-});
+// app.get('/api/protected-site', checkJwt, (req, res) => {
+//   res.json({
+//     message: 'Hello from a private endpoint! You need to be authenticated to see this.'
+//   });
+// });
 
 
 
