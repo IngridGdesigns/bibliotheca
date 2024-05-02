@@ -55,6 +55,7 @@ const NavBar = () => {
                   Home
                 </NavLink>
               </NavItem>
+
               {isAuthenticated && (
                 <NavItem>
                   <NavLink
@@ -68,6 +69,7 @@ const NavBar = () => {
                 </NavItem>
               )}
             </Nav>
+
             <Nav className="d-none d-md-block" navbar>
               {!isAuthenticated && (
                 <NavItem>
@@ -77,10 +79,25 @@ const NavBar = () => {
                     className="btn-margin"
                     onClick={() => loginWithRedirect()}
                   >
-                    Log in
+                    Log in / Sign up
                   </Button>
                 </NavItem>
               )}
+              </Nav>
+               <Nav className="d-none d-md-block" navbar>
+              {!isAuthenticated && (
+                <NavItem>
+                  <Button
+                    id="qsLoginBtn"
+                    color="primary"
+                    className="btn-margin"
+                    onClick={() => console.log('hello you are not authenticated')}
+                  >
+                    press me
+                  </Button>
+                </NavItem>
+              )}
+
               {isAuthenticated && (
                 <UncontrolledDropdown nav inNavbar>
                   <DropdownToggle nav caret id="profileDropDown">

@@ -5,6 +5,10 @@ const UserProfile = () => {
     const { user, isAuthenticated, isLoading } = useAuth0();
     console.log(useAuth0.user)
 
+    if (user.assignedRoles !== 'Admin') {
+        console.log('not admin')
+    }
+
     if (isLoading) {
         return <div>Loading...</div>;
     } 
@@ -16,6 +20,7 @@ const UserProfile = () => {
                 <h2>{user.name}</h2>
                 <p>{user.email}</p>
                 <p>{user.updated_at}</p>
+                <p>{user.assignedRoles}</p>
             </div>
         )
     )
