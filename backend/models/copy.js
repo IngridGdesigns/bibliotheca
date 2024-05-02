@@ -26,8 +26,9 @@ const getBookCopies = async (req, res) => {
 
 // get by copy id- should get all copies of one book by id
 const getBookCopiesById = async (req, res) => {
+     const client = await pool.connect();
     try {
-        const client = await pool.connect();
+       
         const bookCopyId = parseInt(req.params.copy_id);
 
         const result = await client.query(`
@@ -62,11 +63,10 @@ const getBookCopiesById = async (req, res) => {
 
 // create a book copy
 const createBookCopy = async (req, res) => {
+    const client = await pool.connect();
     const { book_id, status } = req.body;
     
   try {
-    const client = await pool.connect();
-
       //function created beforehand in psql to handle copies see sql schema
       const getNextCopyNumberQuery = `SELECT get_next_copy_number($1) AS next_copy_number`;
       
@@ -104,23 +104,23 @@ const createBookCopy = async (req, res) => {
 const editCopyById = async (req, res) => {
     const client = await pool.connect();
 
-    const copyId = parseInt(req.params.copy_id);
+    const copy_id = parseInt(req.params.copy_id);
     const { status } = req.body;
 
   try {
-      await client.query('UPDATE book_copy SET status = $1 WHERE copy_id = $2 RETURNING *' , [status, copyId]);
+      await client.query('UPDATE book_copy SET status = $1 WHERE copy_id = $2 RETURNING *' , [status, copy_id]);
       
       const issued_by = 'Auth0';
     // Add to transaction table //issued by
-      await client.query('INSERT INTO transaction (copy_id, transaction_type, transaction_date, issued_by) VALUES ($1, $2, CURRENT_TIMESTAMP, $3) RETURNING *', [copyId, 'Update Status']);
+      await client.query('INSERT INTO transaction (copy_id, transaction_type, transaction_date, issued_by) VALUES ($1, $2, CURRENT_TIMESTAMP, $3) RETURNING *', [copy_id, 'Update Status', issued_by]);
       
-        res.status(200).json(`Book copy with ID ${copyId} was updated successfully`);
+      res.status(200).json(`Book copy with ID ${copyId} was updated successfully`);
+      client.release();
     } catch (err) {
         console.error('Error updating book copy:', err);
-        res.status(500).send('Server error');
-    } finally {
-        client.release();
-    }
+      res.status(500).send('Server error');
+      client.release();
+    } 
 
 }
 
@@ -148,12 +148,12 @@ const deleteByCopyId = async (req, res) => {
         await client.query('UPDATE book_copy SET copy_number = copy_number - 1 WHERE book_id = $1 AND copy_number > $2', [book_id, copy_number]);
 
         res.status(200).send(`Book copy ${copyId} was successfully deleted`);
+        client.release();
     } catch (error) {
         console.error('Error deleting book:', error);
         res.status(500).send('There was a server error');
-    } finally {
         client.release();
-    }
+    } 
 };
 
 // Delete from book table - the book = all copies of the book

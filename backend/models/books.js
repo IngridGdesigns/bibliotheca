@@ -29,40 +29,61 @@ const getBooks = async (req, res) => {
     })
 }
 
-// get all books with library info
-const getBooksWithAuthorCategoryPublisher = async (req, res) => {
-    const client = await pool.connect();
+// // get all books with library info
+// const getBooksWithAuthorCategoryPublisher = async (req, res) => {
+//     const client = await pool.connect();
 
-    await client.query(`SELECT b.title,
-                        b.description,
-                        a.author_name,
-                        b.isbn,
-                        b.pages,
-                        p.publisher_name,
-                        b.publication_year,
-                        b.language,
-                        c.category_name
-                        FROM book b
-                        JOIN author a ON b.book_id = a.author_id
-                        JOIN category c ON b.category_id = c.category_id
-                        JOIN publisher p ON b.publisher_id = p.publisher_id`, (err, results) => {
-        if (err) {
-            // console.log('error oh noes!!', err)
-            // res.status(500).send('Server error');
-            throw err;
-        } 
-            res.status(200).json(results.rows) // res.json(dbitems.rows)
-            client.release()//closes database
-    })
-}
+//     await client.query(
+//     `SELECT b1.title,
+// 		b1.description,
+// 		a1.author_name,
+// 		b1.isbn,
+// 		b1.pages,
+// 		b1.publication_year,
+// 		b1.language,
+// 		c1.category_name,
+// 		k2.copy_number,
+// 		k2.status
+// FROM book b1
+// JOIN author a1 ON b1.book_id = a1.author_id
+// JOIN category c1 ON b1.category_id = c1.category_id
+// JOIN book_copy k2 ON b1.book_id = k2.book_id;
+// RETURNING b1*`, (err, results) => {
+//         if (err) {
+//             // console.log('error oh noes!!', err)
+//             res.status(500).send('Server error');
+//             throw err;
+//         } 
+//             res.status(200).json(results.rows) // res.json(dbitems.rows)
+//             client.release()//closes database
+//     })
+// }
+
+  
+
+        
+        // SELECT b.title,
+        //                 b.description,
+        //                 a.author_name,
+        //                 b.isbn,
+        //                 b.pages,
+        //                 p.publisher_name,
+        //                 b.publication_year,
+        //                 b.language,
+        //                 c.category_name
+        //             FROM book b
+        //             JOIN author a ON b.author_id = a.author_id
+        //             JOIN category c ON b.category_id = c.category_id
+        //             JOIN publisher p ON b.publisher_id = p.publisher_id
+        //             ORDER BY b.book_id
 
 // Get book by id
 const getBookById = async (req, res) => {
     const client = await pool.connect();
 
-    let id = parseInt(req.params.book_id);
+    let book_id = parseInt(req.params.book_id);
 
-     await client.query('SELECT * FROM book WHERE book_id =$1', [id], (err, result) => {
+     await client.query('SELECT * FROM book WHERE book_id = $1', [book_id], (err, result) => {
       if (err) {
           res.status(500).send(err);
          
@@ -412,7 +433,7 @@ const deleteBook = async (req, res) => {
 
 module.exports = {
     getBooks,
-    getBooksWithAuthorCategoryPublisher,
+    // getBooksWithAuthorCategoryPublisher,
     getBookById,
     getBookByAuthorName,
     getBookByPublisher,

@@ -38,7 +38,7 @@ app.use(cors()); // enable cors for all origins, could be modified to only one
 app.use(function (req, res, next) {
   // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers');
+  // res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers');
   next();
 });
 
@@ -75,6 +75,7 @@ const publisherRoutes = require('./routes/publisherRoutes')
 const reportRoutes = require('./routes/reportRoutes')
 const transactionRoutes = require('./routes/transactionsRoutes')
 const userRoutes = require('./routes/userRoutes')
+const searchRoutes = require('./routes/searchRoute');
 
 // // Use all API routes
 app.use('/api/authors', authorRoutes);
@@ -89,6 +90,7 @@ app.use('/api/publishers', publisherRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/search', searchRoutes);
 
 // app.use('/bookstuff', bookRoutes) //testing
 
@@ -110,7 +112,7 @@ app.use(notFoundHandler);
 
 // apiRouter.use("/messages", messagesRouter);
 
-app.use('/getawesome', bookRoutes);
+// app.use('/getawesome', bookRoutes);
 
 // app.get('/api/private-scoped', checkJwt, (req, res) => {
 //   res.json({
