@@ -9,6 +9,16 @@ const pool = require('../database')
 //     role character varying(50) NOT NULL
 // );
 
+/* 
+auth0 returns
+     console.log(user.sub);
+    console.log(user.name);
+    console.log(user.email);
+    console.log(user.assignedRoles);
+
+
+*/
+
 /********************************
         Users table CRUD 
 ********************************/
@@ -51,21 +61,30 @@ const getUserById = async (req, res) => {
     })
 }
 
+
 // add new user
 const createUser = async (req, res) => {
     const client = await pool.connect();
 
+    // auth0 returns
+    //  console.log(user.sub);
+    // console.log(user.name);
+    // console.log(user.email);
+    // console.log(user.assignedRoles);
+
+    let user_id = req.body.sub ?? req.body.user_id// auth0 id
     let name = req.body.name;
     let email = req.body.email;
-    let password = bcrypt.hashSync(req.body.password, 8); // encryption - hash a password
+    // const hashedPwd = await bcrypt.hash(`${req.body.password}`, 10); //bcrypt.hashSync(req.body.password, 8); // encryption - hash a password
     let role = req.body.role;
+    
 
-     if (!name || !email || !password || !role) {
-      return res.status(400).json({ error: 'name, email, password and role are required' });
+     if (!email || !role ) {
+      return res.status(400).json({ error: 'user_id, name, email and role are required' });
     }
 
-    await client.query('INSERT INTO USERS(name, email, password, role) VALUES($1, $2, $3, $4) RETURNING *',
-        [name, email, password, role], (err, result) => {
+    await client.query('INSERT INTO USERS(user_id, name, email, role) VALUES($1, $2, $3, $4) RETURNING *',
+        [user_id, name, email, role], (err, result) => {
             if (err) {
                 res.status(500).send('Server error')
                 client.release()
@@ -81,20 +100,26 @@ const updateUserById = async (req, res) => {
     const client = await pool.connect();
     const memberId = parseInt(req.params.member_id);
     
-    const { name, email, password, role } = req.body;
-    password = bcrypt.hashSync(req.body.password, 8);
+    const name = req.body.name;
+    const email = req.body.email;
+    const role = req.body.role;
+    // const hashedPwd = await bcrypt.hash(`${password}`, 10);
 
-    try {
-        let res = await client.query(
-            'UPDATE users SET username = $1, email = $2, password = $3, role = $4 WHERE member_id = $5 RETURNING *',
-          
-            [name, email, password, role, memberId])
-            res.status(200).json(`This user with the id: ${memberId} was updated!`)
-    } catch (err) {
-        res.status(500).send(err);
-    } finally {
-        client.release()
-    }
+   
+    await client.query('UPDATE users SET name = $1, email = $2, role = $3 WHERE member_id = $4 RETURNING *',
+        [name, email, role, memberId]), (err, results) => {
+            if(err){
+           console.log('Oh noes you have an error!!')
+           res.status(500).send('There is a server error')
+           client.release()
+       }
+       else {
+           console.log(`User:${name} - ${memberId} was succesfully deleted`)
+           res.status(200).end()
+           client.release()
+       }
+   
+        }
 }
 
 // delete by user member id
@@ -104,8 +129,7 @@ const deleteUser = async (req, res) => {
     const name = req.params.name;
 
 
-    await client.query(
-            'DELETE users WHERE member_id = $1', [memberId], (err, results) => {
+    await client.query('DELETE FROM users WHERE member_id = $1', [memberId], (err, results) => {
          if(err){
            console.log('Oh noes you have an error!!')
            res.status(500).send('There is a server error')

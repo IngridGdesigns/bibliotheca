@@ -7,7 +7,7 @@ const morgan = require('morgan');//HTTP request logger middleware, generates log
 const app = express();
 const cookieParser = require('cookie-parser')
 // const database = require('./models/books');  //testing new routes
-// const { messagesRouter } = require("./messages/messages.router");
+const { messagesRouter } = require("./messages/messages.router");
 const { errorHandler } = require("./middleware/error.middleware");
 const { notFoundHandler } = require("./middleware/not-found.middleware");
 const { auth, requiredScopes } = require('express-oauth2-jwt-bearer'); // AUTH0
@@ -35,11 +35,10 @@ app.use(helmet());
 app.use(cookieParser())
 app.use(cors()); // enable cors for all origins, could be modified to only one
 
-app.use((req, res, next) => {
-  res.contentType("application/json; charset=utf-8");
-  // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001'); //set for testing
-  // res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  // res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers');
+app.use(function (req, res, next) {
+  // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers');
   next();
 });
 
@@ -60,11 +59,7 @@ const checkJwt = auth({
     tokenSigningAlg: 'RS256'
 });
 
-const checkScopes = requiredScopes('read:messages');
-
-// const bookRoutes = require('./routes/bookRoutes')
-
-// app.use('/api/bookstuff', bookRoutes)
+const checkScopes = requiredScopes('read:messages, read:users, post:users, create:users');
 
 // Import - Set up all API routes
 // const adminRoute = require('./routes/adminRoute');
@@ -95,7 +90,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/users', userRoutes);
 
-app.use('/bookstuff', bookRoutes) //testing
+// app.use('/bookstuff', bookRoutes) //testing
 
 app.get("/api/external", (req, res) => {
   res.send({
@@ -105,13 +100,9 @@ app.get("/api/external", (req, res) => {
 app.use(errorHandler);
 app.use(notFoundHandler);
 
-app.get('/', (request, response) => {
-  response.json({ info: 'Node.js, Express, and Postgres API' })
-})
-
-
-
-
+// app.get('/', (request, response) => {
+//   response.json({ info: 'Node.js, Express, and Postgres API' })
+// })
 
 
 // app.use("/authors", authorRoutes);
@@ -127,20 +118,13 @@ app.use('/getawesome', bookRoutes);
 //   });
 // });
 
-// app.use(library)
-
-
-
-// // This route doesn't need authentication
+ // This route doesn't need authentication
 // app.get('/api/public', (req, res) => {
 //   res.json({
 //     message: 'Hello from a public endpoint! You don\'t need to be authenticated to see this.'
 //   });
 // });
 
-// app.get('/profile', (req, res) => {
-//     console.log(req);
-// })
 
 // // This route needs authentication
 // app.get('/api/protected-site', checkJwt, (req, res) => {
