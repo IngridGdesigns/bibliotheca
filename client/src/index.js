@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { Auth0Provider } from '@auth0/auth0-react';
-import { useRedirectCallback } from "./Auth0ProviderWithNavigate"
+// import { useRedirectCallback } from "./Auth0ProviderWithNavigate"
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -36,7 +36,7 @@ root.render(
     authorizationParams={{
       redirect_uri: window.Location.origin || redirectUri,
     }}
-    onRedirectCallback={useRedirectCallback}
+    // onRedirectCallback={useRedirectCallback}
   >
     <App/>
   </Auth0Provider>
