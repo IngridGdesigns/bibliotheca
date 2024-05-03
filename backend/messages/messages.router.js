@@ -28,9 +28,10 @@ messagesRouter.get(
   validateAccessToken,
   checkRequiredPermissions([AdminMessagesPermissions.Read]),
   (req, res) => {
-    const message = getAdminMessage();
+    // const message = getAdminMessage();
 
-    res.status(200).json(message);
+    res.status(200).json('you are admin');
+    // res.status(200).json(message);
   }
 );
 
