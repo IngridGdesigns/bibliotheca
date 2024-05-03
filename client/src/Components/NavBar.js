@@ -36,6 +36,8 @@ const NavBar = () => {
           returnTo: window.location.origin,
         }
     });
+  
+  // console.log(user.assignedRoles)
 
   return (
     <div className="nav-container">
@@ -56,7 +58,23 @@ const NavBar = () => {
                 </NavLink>
               </NavItem>
 
+                {isAuthenticated && (
+                
+                <NavItem>
+                  <NavLink
+                    tag={RouterNavLink}
+                    to="/dashboard"
+                    exact
+                    activeClassName="router-link-exact-active"
+                  >
+                    Admin dashboard
+                  </NavLink>
+                </NavItem>
+                
+              )}
+
               {isAuthenticated && (
+                
                 <NavItem>
                   <NavLink
                     tag={RouterNavLink}
@@ -67,6 +85,7 @@ const NavBar = () => {
                     External API
                   </NavLink>
                 </NavItem>
+                
               )}
             </Nav>
 
@@ -83,7 +102,8 @@ const NavBar = () => {
                   </Button>
                 </NavItem>
               )}
-              </Nav>
+            </Nav>
+            
                <Nav className="d-none d-md-block" navbar>
               {!isAuthenticated && (
                 <NavItem>

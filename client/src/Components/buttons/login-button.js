@@ -16,7 +16,7 @@ export const LoginButton = () => {
   };
 
   return (
-    <button className="button__login" onClick={handleLogin}>
+    <button className="primary" onClick={handleLogin}>
       Log In
     </button>
   );

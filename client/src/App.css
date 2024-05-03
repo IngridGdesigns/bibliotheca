@@ -1,3 +1,14 @@
+.h {
+  background-image: url("https://www.wallpapertip.com/wmimgs/199-1999551_wonderful-shapes-wallpaper-background-shapes-background.jpg");
+  /* opacity: 0.50; */
+}
+
+.bg {
+  padding-top: 4em;
+  background-color: beige;
+  opacity: 0.88;
+}
+
 .next-steps .fa-link {
   margin-right: 5px;
 }

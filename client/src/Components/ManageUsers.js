@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import { withAuth0 } from '@auth0/auth0-react';
 
 const ManageUsers = () => {
     const [users, setUsers] = useState(false);
@@ -12,19 +12,10 @@ const ManageUsers = () => {
         } 
         
     return accessToken;
-      }
-    // const getAccessToken = async () => {
-    //     const accessToken = await getAccessTokenSilently();
-    //     return accessToken;
-    // }
+      
+  }
 
-    
-    // useEffect(() => {
-    //     getUsers();
-    // }, []);  
 
-   
-    
   function getUsers() {
     const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAccessToken()}` }
       
@@ -67,8 +58,8 @@ const ManageUsers = () => {
       })
       .then(data => {
           alert(data);
-        //   setUsers(JSON.parse(data));
-        getUsers();
+        //   
+        setUsers();
       });
   }
 
@@ -85,7 +76,7 @@ const ManageUsers = () => {
       .then(data => {
           alert(data);
         //   setUsers(JSON.parse(data));
-        getUsers();
+        setUsers(getUsers());
       });
   }
 
@@ -111,7 +102,7 @@ const ManageUsers = () => {
       .then(data => {
           alert(data);
         //   setUsers(JSON.parse(data));
-        getUsers();
+        setUsers(getUsers());
       });
   }
 
@@ -122,7 +113,7 @@ const ManageUsers = () => {
     return (
         <>
         <div>
-        {users ? users : 'There is no merchant data available'}
+        {users ? users : 'There is no user data available'}
       <br />
       <button onClick={createUser}>Add user</button>
       <br />
@@ -133,7 +124,7 @@ const ManageUsers = () => {
         </>
   );
 }
-export default ManageUsers;
+export default withAuth0(ManageUsers);
 
 
 
@@ -143,36 +134,36 @@ export default ManageUsers;
 
 
 
-//  const { apiOrigin = "http://localhost:3001"} = getConfig();
-//   const { user, getAccessTokenSilently } = useAuth0();
+// //  const { apiOrigin = "http://localhost:3001"} = getConfig();
+// //   const { user, getAccessTokenSilently } = useAuth0();
 
-//    const [users, setUsers] = useState(false);
+// //    const [users, setUsers] = useState(false);
 
-// async function getUserssToDb() {
-//   // const apiServerUrl = process.env.REACT_APP_SERVER_URL;
-//   const accessToken = await getAccessTokenSilently();
-//   console.log(user);
-//   console.log(user.sub)
-//   let users = {
-//     name: user.name,
-//     email: user.email,
-//     user_id: user.sub,
-//     role: user.assignedRoles,
-//   }
+// // async function getUserssToDb() {
+// //   // const apiServerUrl = process.env.REACT_APP_SERVER_URL;
+// //   const accessToken = await getAccessTokenSilently();
+// //   console.log(user);
+// //   console.log(user.sub)
+// //   let users = {
+// //     name: user.name,
+// //     email: user.email,
+// //     user_id: user.sub,
+// //     role: user.assignedRoles,
+// //   }
 
-//   const config = {
-//     url: `${apiOrigin}api/users/create`,
-//     method: "POST",
-//     headers: { Authorization: `Bearer ${accessToken}`},
-//     data: JSON.stringify(users)
-//   };
+// //   const config = {
+// //     url: `${apiOrigin}api/users/create`,
+// //     method: "POST",
+// //     headers: { Authorization: `Bearer ${accessToken}`},
+// //     data: JSON.stringify(users)
+// //   };
 
-//   axios(config).then(response => {
-//     console.log(`the res is ${response}`)
-//   })
-//     .catch(err => {
-//       console.log('post error', err);
-//   })
-// };
+// //   axios(config).then(response => {
+// //     console.log(`the res is ${response}`)
+// //   })
+// //     .catch(err => {
+// //       console.log('post error', err);
+// //   })
+// // };
   
-// getUserssToDb()
+// // getUserssToDb()

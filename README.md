@@ -54,6 +54,8 @@ curl http://localhost:3001/api/books/items -i
 
 ## Auth0 Resources WIP
 
+1. If planning to use [class components in React visit](https://github.com/auth0/auth0-react/blob/main/EXAMPLES.md#use-with-a-class-component)
+1. To distiguish between a user and admin, use [claims check](https://github.com/auth0/auth0-react/blob/main/EXAMPLES.md#protecting-a-route-with-a-claims-check)
 1. [Auth API Explorer](https://auth0.com/docs/api/authentication?javascript#get-user-info)
 1. [How to make API calls to the Auth0 Management API.](https://auth0.com/docs/quickstart/spa/react/02-calling-an-api)
 1. [Getting Started with Auth0 series](https://auth0.com/docs/videos/get-started-series)
@@ -114,17 +116,23 @@ curl http://localhost:3001/api/books/items -i
  - You can curl to see your user or check client/views/External Api, you should see your role with other user info:
     ```<will insert screenshot>```
 
-// https://auth0.com/docs/api/management/v2/users/get-user-roles
-- svg https://www.svgbackgrounds.com/elements/animated-svg-preloaders/
- - Animated SVG Preloaders by SVGBackgrounds.com<
+## Resources
 
+- image from : 
+  - svg https://www.svgbackgrounds.com/elements/animated-svg-preloaders/
+  - Animated SVG Preloaders by SVGBackgrounds.com
+
+- favicon
  -book icon https://icons8.com/icon/112289/book
  https://icons8.com/icons/set/book
  faavicon
+
+# More Auth0 helpful links
+- https://auth0.com/docs/api/management/v2/users/get-user-roles
+
+- https://auth0.com/docs/manage-users/user-accounts/metadata/manage-user-metadata
  
- - https://auth0.com/docs/manage-users/user-accounts/metadata/manage-user-metadata
- 
- user api - https://auth0.com/docs/api/management/v2/users/get-user-roles
+- https://auth0.com/docs/api/management/v2/users/get-user-roles
 
 Milestones: 
 - In the future I would like refactor to use Vite React to improve build performance.

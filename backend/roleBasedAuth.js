@@ -11,3 +11,4 @@ export const usersOnly = (req, res, next) => {
     // it will prevent potential hackers from knowing such page exists.
     res.redirect(303, '/unauthorized');
 }
+

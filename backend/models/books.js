@@ -251,79 +251,91 @@ const createReturnBook = async (req, res) => {
  Create, Update, Delete - Done only by Librarian or Admin
 
 ********************************************************* */
+// const createBook2 = async (req, res => {
+//     `
+//     BEGIN;
+
+// -- Step 1: Insert data into the author table
+// INSERT INTO author (author_name) VALUES ($1) ON CONFLICT DO NOTHING;
+
+// -- Step 2: Insert data into the publisher table
+// INSERT INTO publisher (publisher_name) VALUES ($2) ON CONFLICT DO NOTHING;
+
+// -- Step 3: Insert data into the book table using author and publisher IDs
+// INSERT INTO book (title, author_id, publisher_id, description, publication_year, pages, isbn, category_id)
+// VALUES ('Book Title', 
+//         COALESCE((SELECT author_id FROM author WHERE author_name = '$3'), 
+//                  (INSERT INTO author (author_name) VALUES ('$4') RETURNING author_id)), 
+//         COALESCE((SELECT publisher_id FROM publisher WHERE publisher_name = '$5'), 
+//                  (INSERT INTO publisher (publisher_name) VALUES ('$2') RETURNING publisher_id)),
+//         'Book Description', 
+//         2022, -- Example publication year
+//         300, -- Example number of pages
+//         '123456789', -- Example ISBN
+//         1) -- Example category_id
+
+// -- Step 4: Insert data into the book_copy table
+// INSERT INTO book_copy (book_id, copy_number, status) VALUES (lastval(), 1, 'Available');
+
+// COMMIT;
+// `
+// })
+
+const createDisplayBook = async (req, res) => {
+    const client = pool.connect();
+    
+}
 
 // Add new book 
 const createBook = async (req, res) => {
     const client = await pool.connect();
 
     try {
-          // Input validation
-        // const { title, author_id, publisher_id, category_id, description, publication_year, pages, isbn, language, num_copies } = req.body;
-        // if (!title || !author_id || !publisher_id || !category_id || !num_copies) {
-        //     return res.status(400).send('Required fields missing');
-        // }
+        const { author_name, publisher_name, category_name, title, description, publication_year, pages, isbn, language, issued_by } = req.body;
 
-        // Merge queries using Common Table Expressions (CTEs)
-        const query = `
-            WITH author_insert AS (
-                INSERT INTO author (author_name)
-                VALUES ($1)
-                ON CONFLICT DO NOTHING
-                RETURNING author_id
-            ),
-            publisher_insert AS (
-                INSERT INTO publisher (publisher_name)
-                VALUES ($2)
-                ON CONFLICT DO NOTHING
-                RETURNING publisher_id
-            ),
-            category_insert AS (
-                INSERT INTO category (category_name)
-                VALUES ($3)
-                ON CONFLICT DO NOTHING
-                RETURNING category_id
-            ),
-            book_insert AS (
-                INSERT INTO book (title, author_id, publisher_id, category_id, description, publication_year, pages, isbn, language)
-                SELECT $4, COALESCE((SELECT author_id FROM author_insert), $5), COALESCE((SELECT publisher_id FROM publisher_insert), $6), COALESCE((SELECT category_id FROM category_insert), $7), $8, $9, $10, $11, $12
-                RETURNING *
-            ),
-            next_copy_number AS (
-                SELECT get_next_copy_number((SELECT book_id FROM book_insert)) AS next_copy_number
-            )
-            INSERT INTO book_copy (book_id, copy_number, status)
-            SELECT (SELECT book_id FROM book_insert), next_copy_number + row_number() OVER (), 'Available'
-            FROM next_copy_number
-            CROSS JOIN generate_series(1, $13) AS s
-            RETURNING *;
-        `;
-        
-        const values = [
-            author_name, publisher_name, category_name,
-            title, author_id, publisher_id, category_id, description, publication_year, pages, isbn, language,
-            num_copies
-        ];
+        // Step 1: Insert data into the author table
+        await client.query(`BEGIN
 
-        const issued_by = req.params.sub;
+    -- Step 1: Insert data into the author table
+    INSERT INTO author (author_name) VALUES ($1) ON CONFLICT DO NOTHING;
 
-        const { rows: bookRows } = await client.query(query, values);
+    -- Step 2: Insert data into the publisher table
+    INSERT INTO publisher (publisher_name) VALUES ($2) ON CONFLICT DO NOTHING;
 
-        const bookId = bookRows[0].book_id;
+    -- Step 3: Insert data into the category table
+    INSERT INTO category (category_name) VALUES ($3) ON CONFLICT DO NOTHING;
 
-        await client.query(
-            'INSERT INTO transaction (copy_id, transaction_type, transaction_date, issued_by) VALUES ($1, $2, CURRENT_TIMESTAMP, $3)',
-            [bookId, 'Book Creation', issued_by]
+    -- Step 4: Insert data into the book table using author and publisher IDs
+    INSERT INTO book (title, author_id, publisher_id, category_id, description, publication_year, pages, isbn, language)
+    VALUES ($4,
+            COALESCE((SELECT author_id FROM author WHERE author_name = $1), 
+                    (INSERT INTO author (author_name) VALUES ($1) RETURNING author_id)), 
+            COALESCE((SELECT publisher_id FROM publisher WHERE publisher_name = $2), 
+                    (INSERT INTO publisher (publisher_name) VALUES ($2) RETURNING publisher_id)),
+            COALESCE((SELECT category_id FROM category WHERE category_name = $3), 
+                    (INSERT INTO category (category_name) VALUES ($3) RETURNING category_id)),
+            $5, $6, $7, $8, $9);
+
+
+    INSERT INTO book_copy (book_id, copy_number, status) VALUES (lastval(), 1, 'Available');}
+
+       
+    INSERT INTO transaction (copy_id, transaction_type, transaction_date, issued_by) VALUES ($1, $2, CURRENT_TIMESTAMP, $3)',
+                [book_id, 'Book Creation', issued_by]
+        COMMIT`
         );
-
+        res.status(200).json(results.rows)
         res.status(200).send('Book added successfully');
     } catch (error) {
-
+        // Roll back the transaction if any statement fails
+        await client.query('ROLLBACK');
         console.error('Error creating book:', error);
         res.status(500).send('Server error');
     } finally {
+        // Release the client back to the pool
         client.release();
     }
-};
+}
 
 // Update book by book_id ('/:book_id', async 
 const updateBook = async (req, res) => {
