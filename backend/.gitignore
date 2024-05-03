@@ -8,6 +8,7 @@ oldroutes/
 
 # Dependency directories
 node_modules/
+authUsers.js
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
