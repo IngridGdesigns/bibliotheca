@@ -49,7 +49,7 @@ const getUserById = async (req, res) => {
 
     let id = parseInt(req.params.member_id);
 
-    await client.query('SELECT * FROM users WHERE member_id =$1', [id], (err, result) => {
+    await client.query('SELECT * FROM users WHERE member_id = $1', [id], (err, result) => {
       if (err) {
           res.status(500).send(err);
           client.release()
@@ -65,6 +65,7 @@ const getUserById = async (req, res) => {
 // add new user
 const createUser = async (req, res) => {
     const client = await pool.connect();
+    
 
     // auth0 returns
     //  console.log(user.sub);
@@ -76,7 +77,7 @@ const createUser = async (req, res) => {
     let name = req.body.name;
     let email = req.body.email;
     // const hashedPwd = await bcrypt.hash(`${req.body.password}`, 10); //bcrypt.hashSync(req.body.password, 8); // encryption - hash a password
-    let role = req.body.role;
+    let role = JSON.stringify(req.body.role);
     
 
      if (!email || !role ) {

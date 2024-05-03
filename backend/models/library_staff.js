@@ -10,9 +10,11 @@ const getAllStaffMembers = async (req, res) => {
         const client = await pool.connect();
         const { rows } = await client.query('SELECT * FROM library_staff');
         res.status(200).json(rows);
+        client.release()
     } catch (error) {
         console.error('Error fetching library staff:', error);
         res.status(500).send('Server error');
+        client.release()
     }
 };
 

@@ -17,65 +17,18 @@ const pool = require('../database')// Import your PostgreSQL connection pool
 const getBooks = async (req, res) => {
     const client = await pool.connect();
 
-    await client.query('SELECT * FROM book ORDER BY book_id ASC', (err, results) => {
+    await client.query('SELECT * FROM book', (err, results) => {
 
         if (err) {
             // console.log('error oh noes!!', err)
             res.status(500).send('Server error');
-            throw err;
+
         } 
             res.status(200).json(results.rows) // res.json(dbitems.rows)
             client.release()//closes database
     })
 }
 
-// // get all books with library info
-// const getBooksWithAuthorCategoryPublisher = async (req, res) => {
-//     const client = await pool.connect();
-
-//     await client.query(
-//     `SELECT b1.title,
-// 		b1.description,
-// 		a1.author_name,
-// 		b1.isbn,
-// 		b1.pages,
-// 		b1.publication_year,
-// 		b1.language,
-// 		c1.category_name,
-// 		k2.copy_number,
-// 		k2.status
-// FROM book b1
-// JOIN author a1 ON b1.book_id = a1.author_id
-// JOIN category c1 ON b1.category_id = c1.category_id
-// JOIN book_copy k2 ON b1.book_id = k2.book_id;
-// RETURNING b1*`, (err, results) => {
-//         if (err) {
-//             // console.log('error oh noes!!', err)
-//             res.status(500).send('Server error');
-//             throw err;
-//         } 
-//             res.status(200).json(results.rows) // res.json(dbitems.rows)
-//             client.release()//closes database
-//     })
-// }
-
-  
-
-        
-        // SELECT b.title,
-        //                 b.description,
-        //                 a.author_name,
-        //                 b.isbn,
-        //                 b.pages,
-        //                 p.publisher_name,
-        //                 b.publication_year,
-        //                 b.language,
-        //                 c.category_name
-        //             FROM book b
-        //             JOIN author a ON b.author_id = a.author_id
-        //             JOIN category c ON b.category_id = c.category_id
-        //             JOIN publisher p ON b.publisher_id = p.publisher_id
-        //             ORDER BY b.book_id
 
 // Get book by id
 const getBookById = async (req, res) => {
@@ -95,10 +48,39 @@ const getBookById = async (req, res) => {
     })
 }
 
+// // get all books with library info
+const getBooksWithAuthorCategoryPublisher = async (req, res) => {
+    const client = await pool.connect();
+
+    const query = `SELECT b1.title,
+		b1.description,
+		a1.author_name,
+		b1.isbn,
+		b1.pages,
+		b1.publication_year,
+		b1.language,
+		c1.category_name,
+		b2.copy_number,
+		b2.status
+FROM book b1
+JOIN author a1 ON b1.book_id = a1.author_id
+JOIN category c1 ON b1.category_id = c1.category_id
+JOIN book_copy b2 ON b1.book_id = b2.book_id;`
+  await client.query(query, (err, results) => {
+        if (err) {
+            // console.log('error oh noes!!', err)
+            res.status(500).send('Server error');
+            client.release()
+        } 
+            res.status(200).json(results.rows) // res.json(dbitems.rows)
+            client.release()//closes database
+    })
+}
+
 // Get book by author name ///books-by-author/:authorName
 //('/:authorName', 
 const getBookByAuthorName = async (req, res) => {
-    const client = await pool.connect()();
+    const client = await pool.connect();
 
     let authorName = req.params.author_name;
 
@@ -185,7 +167,7 @@ const createBorrowBook = async (req, res) => {
 
     // Insert a new record into the transaction table
     await client.query(
-      'INSERT INTO transaction (member_id, copy_id, transaction_type, transaction_date, due_date, automated_transaction) VALUES ($1, $2, $3, CURRENT_TIMESTAMP,, $5, true)',
+      'INSERT INTO transaction (member_id, copy_id, transaction_type, transaction_date, due_date, automated_transaction) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, $5, true)',
       [member_id, availableCopy.rows[0].copy_id, 'Borrow', dueDate] // Adjust 'Auth0 sub_id' as needed
     );
 
@@ -233,7 +215,7 @@ const createRenewBook = async (req, res) => {
 
 // Endpoint to return a book ('/books/return', async
 const createReturnBook = async (req, res) => {
-    const { transaction_id, copy_id, returned_by } = req.body;
+    const { transaction_id, copy_id } = req.body;
     const client = await pool.connect();
 
     try {
@@ -247,22 +229,19 @@ const createReturnBook = async (req, res) => {
         const { rows: transactionResult } = await client.query(getTransactionQuery, [transaction_id]);
         const member_id = transactionResult[0].member_id;
 
-        await client.query('UPDATE library_account SET num_checked_out_books = num_checked_out_books - 1 WHERE member_id = $1 ', [member_id]);
+        await client.query('UPDATE library_account SET num_checked_out_books = num_checked_out_books - 1 WHERE member_id = $1', [member_id]);
 
         // Create transaction record for return
-        const insertReturnTransactionQuery = 'INSERT INTO transaction (transaction_type, copy_id, CURRENT_TIMESTAMP, automated_transaction) VALUES ($1, $2, true) RETURNING *';
+        const insertReturnTransactionQuery = 'INSERT INTO transaction (transaction_type, copy_id, return_timestamp, automated_transaction) VALUES ($1, $2, CURRENT_TIMESTAMP, true) RETURNING *';
         const transactionType = 'Return';
         const { rows: newTransaction } = await client.query(insertReturnTransactionQuery, [transactionType, copy_id]);
 
-
         res.status(201).json({ updatedCopy: updatedCopy[0], newTransaction: newTransaction[0] });
+        client.release()
+    
     } catch (error) {
-        // If an error occurs, rollback the transaction
-        await client.query('ROLLBACK');
         console.error('Error returning book:', error);
         res.status(500).send('Server error');
-    } finally {
-        // Release the client from the pool
         client.release();
     }
 };
@@ -279,10 +258,10 @@ const createBook = async (req, res) => {
 
     try {
           // Input validation
-        const { title, author_id, publisher_id, category_id, description, publication_year, pages, isbn, language, num_copies } = req.body;
-        if (!title || !author_id || !publisher_id || !category_id || !num_copies) {
-            return res.status(400).send('Required fields missing');
-        }
+        // const { title, author_id, publisher_id, category_id, description, publication_year, pages, isbn, language, num_copies } = req.body;
+        // if (!title || !author_id || !publisher_id || !category_id || !num_copies) {
+        //     return res.status(400).send('Required fields missing');
+        // }
 
         // Merge queries using Common Table Expressions (CTEs)
         const query = `
@@ -325,7 +304,7 @@ const createBook = async (req, res) => {
             num_copies
         ];
 
-        const issued_by = 'Auth0';
+        const issued_by = req.params.sub;
 
         const { rows: bookRows } = await client.query(query, values);
 
@@ -433,12 +412,11 @@ const deleteBook = async (req, res) => {
 
 module.exports = {
     getBooks,
-    // getBooksWithAuthorCategoryPublisher,
+    getBooksWithAuthorCategoryPublisher,
     getBookById,
     getBookByAuthorName,
     getBookByPublisher,
     getBookByCategory,
-    createBorrowBook,
     createRenewBook,
     createReturnBook,
     createBook,
@@ -554,3 +532,5 @@ module.exports = {
 //         client.release();
 //     }
 // };
+
+

@@ -1,7 +1,7 @@
 const express = require('express');
 const {
     getBooks,
-    // getBooksWithAuthorCategoryPublisher,
+    getBooksWithAuthorCategoryPublisher, //watch
     getBookById,
     getBookByAuthorName,
     getBookByPublisher,
@@ -19,7 +19,7 @@ const router = express.Router();
 router.get('/', getBooks);
 
 // GET all books to display in library
-// router.get('/details', getBooksWithAuthorCategoryPublisher);
+router.get('/details', getBooksWithAuthorCategoryPublisher);
 
 // GET book by ID
 router.get('/:book_id', getBookById);

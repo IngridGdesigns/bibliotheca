@@ -10,9 +10,9 @@ const getAllAccounts = async (req, res) => {
     await client.query('SELECT * FROM library_account ORDER BY member_id ASC', (err, results) => {
 
         if (err) {
-            // console.log('error oh noes!!', err)
-            // res.status(500).send('Server error');
-            throw err;
+            console.log('error oh noes!!', err)
+            res.status(500).send('Server error');
+           
         }
         res.status(200).json(results.rows) // res.json(dbitems.rows)
         client.release()//closes database

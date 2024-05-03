@@ -69,7 +69,9 @@ const updateAuthor = async (req, response) => {
     await client.query(
         'UPDATE author SET author_name = $1 WHERE author_id = $5 RETURNING *', [author_name, authorId], (res, result) => {
             if (error) {
-                throw error;
+                console.error('Error returning book:', error);
+                res.status(500).send('Server error');
+                client.release();
             }
             response.status(200).json(`This author with the id: ${authorId} was updated!`)
     })  

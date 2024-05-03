@@ -162,7 +162,7 @@ const getAllBooksaAndMemberPlacingHolds = async (req, res) => {
         if (err) {
             console.log('error oh noes!!', err)
             res.status(500).send('Server error');
-            throw err;
+            client.release()
         } 
             res.status(200).json(results.rows) // res.json(dbitems.rows)
             client.release()//closes database

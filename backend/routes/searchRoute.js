@@ -1,12 +1,13 @@
 const express = require('express');
-const { searchTermExactMatch, searchWithPartialmatch} = require('../models/search')
+const { searchWithPartialmatch} = require('../models/search')
 
 const router = express.Router();
 
 // Get partial match - book search bar
-router.get('/', searchWithPartialmatch);
+// http://localhost:3001/api/search?term=free <-- example url
+router.get('/', searchWithPartialmatch); 
 
 // Get exact match - book search bar
-router.get('/', searchTermExactMatch);
+// router.get('/', searchTermExactMatch);
 
 module.exports = router;
