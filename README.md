@@ -45,7 +45,8 @@ export default withAuth0(YourComponent );
 
 ```
 
- 1. So, if planning to use [class components in React visit for guidance](https://github.com/auth0/auth0-react/blob/main/EXAMPLES.md#use-with-a-class-component)
+ 1. So, if planning to use [class components in React, visit for guidance](https://github.com/auth0/auth0-react/blob/main/EXAMPLES.md#use-with-a-class-component)
+ and reach out to Auth0 if you cant find anything in the forums/discussions.
 
 ## Getting Started
 
