@@ -133,7 +133,7 @@ curl http://localhost:3001/api/books/items -i
     exports.onExecutePostLogin = async (event, api) => {
 
 
-   <!-- Check if the user has a role assigned -->
+   // Check if the user has a role assigned -->
   if (event.authorization && event.authorization.roles && event.authorization.roles.length > 0) {
     return;
   }
@@ -156,23 +156,21 @@ curl http://localhost:3001/api/books/items -i
   } catch (e) {
     console.log(e);
   }
-};
-
+}
 ``
 
-Claims check code: 
-
-```javascript
+# Using Claims check
 
    exports.onExecutePostLogin = async (event, api) => {
-   const namespace = 'roleType'
+   const namespace = `roleType`
    if (event.authorization) {
     api.idToken.setCustomClaim(`${namespace}`, event.authorization.roles);
     api.accessToken.setCustomClaim(`${namespace}`, event.authorization.roles);
 
     }}
 
-```
+``
+  
  - Yow will be able to view, for example admin or users just make sure you define the roles before to view your users roles.
  - You can curl to see your user or check client/views/External Api, you should see your role with other user info:
     ```<will insert screenshot>```
