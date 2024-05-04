@@ -8,6 +8,44 @@ A library management system where users can add, view, update, and delete books 
 - Authentication & Authorization: Auth0
 - Backend: NodeJS • Express • Javascript
 - Frontend: React
+- ReactHooks Form 
+
+## Issues and some Troubleshooting: 
+
+ - While trying to complete this project I found a discrepancy with using Auth0 inside Class components, kept getting issues, even though I referred to [React's docs](https://legacy.reactjs.org/docs/hooks-faq.html#should-i-use-hooks-classes-or-a-mix-of-both), found some articles about using a hooks outside of [Class components](https://hackernoon.com/how-to-use-a-hook-in-a-class-component) wrapping my hooks to use inside the class. I was getting muliple errors, I rewrote and tried to get my code to function and got the following errors:
+
+ ```bash
+ Uncaught (in promise) Error: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.
+ ```
+Found a forum on using Auth0's for requesting accessTokens. After troubleshooting on my own and digging around, it states that I should use withAuth0, when using Class Components, instead of using ```{ useAuth0 }`` example:
+
+``` 
+
+import { withAuth0 } from "@auth0/auth0-react"; <--- use this >
+
+import { useAuth0} from "@auth0/auth0-react"; <--- avoid if you are going to use Class components>
+
+``` 
+
+```javascript
+class YourComponent extends Component {
+  async methodThatNeedsToRetrieveAToken() {
+    const { getAccessTokenSilently } = this.props.auth0;
+    const token = await getAccessTokenSIlently();
+    // use token
+    console.log(token);
+  }
+}
+
+export default withAuth0(YourComponent );
+
+```
+
+ 1. So, if planning to use [class components in React visit for guidance](https://github.com/auth0/auth0-react/blob/main/EXAMPLES.md#use-with-a-class-component)
 
 ## Getting Started
 
@@ -50,6 +88,9 @@ curl http://localhost:3001/api/books/items -i
    `"proxy": "https://localhost:3001",` - This configuration tells React development server to proxy all API requests to backend server. It redirects to the express server
 1. Start the React Development Server with ``npm start`, it will run on [localhost:3000](http://localhost:3000)
 1. You should see an Auth0 signup page
+
+<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/signinScreenshot.png" width="48%" height="50%">
+
 1. Read Auth0 Resources to get started
 
 ## Auth0 Resources WIP
@@ -136,3 +177,7 @@ curl http://localhost:3001/api/books/items -i
 
 Milestones: 
 - In the future I would like refactor to use Vite React to improve build performance.
+
+<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/signin.png" width="48%" height="50%">
+
+<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/bareBones.png" width="48%" height="50%">
