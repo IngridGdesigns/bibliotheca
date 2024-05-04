@@ -128,17 +128,19 @@ curl http://localhost:3001/api/books/items -i
    - Define your roles, Admin and Users and add permissions to each role
    - Go to Actions and create a [new action to automatically assign role to users](https://auth0.com/blog/assign-default-role-on-sign-up-with-actions/)
     
-    ```javascript
+
+
+```javascript
 
     exports.onExecutePostLogin = async (event, api) => {
 
 
-   // Check if the user has a role assigned -->
+   // Check if the user has a role assigned 
   if (event.authorization && event.authorization.roles && event.authorization.roles.length > 0) {
     return;
   }
 
-  // Create management API client instance -->
+  // Create management API client instance 
   const ManagementClient = require("auth0").ManagementClient;
 
   const management = new ManagementClient({
@@ -156,12 +158,14 @@ curl http://localhost:3001/api/books/items -i
   } catch (e) {
     console.log(e);
   }
-}
-``
+  ```
+
+
 
 # Using Claims check
 
 ```javascript 
+
    exports.onExecutePostLogin = async (event, api) => {
    const namespace = `roleType`
    if (event.authorization) {
