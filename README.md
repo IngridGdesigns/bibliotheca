@@ -21,7 +21,7 @@ A library management system where users can add, view, update, and delete books 
 3. You might have more than one copy of React in the same app
 See https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.
  ```
-Found a forum on using Auth0's for requesting accessTokens. After troubleshooting on my own and digging around, it states that I should use withAuth0, when using Class Components, instead of using ```{ useAuth0 }`` example:
+I used VSCode debugger and found the breakpoint where it all went downhill, so I found a forum on using Auth0's for requesting accessTokens. After troubleshooting on my own and digging around, it states that I should use withAuth0, when using Class Components, instead of using ```{ useAuth0 }`` example:
 
 ``` 
 
@@ -41,7 +41,7 @@ class YourComponent extends Component {
   }
 }
 
-export default withAuth0(YourComponent );
+export default withAuth0(YourComponent);
 
 ```
 
@@ -179,6 +179,6 @@ curl http://localhost:3001/api/books/items -i
 Milestones: 
 - In the future I would like refactor to use Vite React to improve build performance.
 
-<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/signin.png" width="48%" height="50%">
+<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/signin.png" width="60%" height="60%">
 
-<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/bareBones.png" width="48%" height="50%">
+<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/bareBones.png" width="60%" height="60%">
