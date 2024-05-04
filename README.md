@@ -12,7 +12,7 @@ A library management system where users can add, view, update, and delete books 
 
 ## Issues and some Troubleshooting: 
 
- - While trying to complete this project I found a discrepancy with using Auth0 inside Class components, kept getting issues, even though I referred to [React's docs](https://legacy.reactjs.org/docs/hooks-faq.html#should-i-use-hooks-classes-or-a-mix-of-both), found some articles about using a hooks outside of [Class components](https://hackernoon.com/how-to-use-a-hook-in-a-class-component) wrapping my hooks to use inside the class. I was getting muliple errors, I rewrote and tried to get my code to function and got the following errors:
+ While trying to complete this project I found a discrepancy with using Auth0 inside Class components, kept getting issues, even though I referred to [React's docs](https://legacy.reactjs.org/docs/hooks-faq.html#should-i-use-hooks-classes-or-a-mix-of-both), found some articles about using a hooks outside of [Class components](https://hackernoon.com/how-to-use-a-hook-in-a-class-component) wrapping my hooks to use inside the class. I was getting muliple errors, I rewrote and tried to get my code to function and got the following errors:
 
  ```bash
  Uncaught (in promise) Error: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
@@ -45,7 +45,7 @@ export default withAuth0(YourComponent);
 
 ```
 
- 1. So, if planning to use [class components in React, visit for guidance](https://github.com/auth0/auth0-react/blob/main/EXAMPLES.md#use-with-a-class-component)
+  So, if planning to use [class components in React, visit for guidance](https://github.com/auth0/auth0-react/blob/main/EXAMPLES.md#use-with-a-class-component)
  and reach out to Auth0 if you cant find anything in the forums/discussions.
 
 ## Current State of Bibliotheca app
