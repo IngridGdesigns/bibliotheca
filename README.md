@@ -161,6 +161,7 @@ curl http://localhost:3001/api/books/items -i
 
 # Using Claims check
 
+```javascript 
    exports.onExecutePostLogin = async (event, api) => {
    const namespace = `roleType`
    if (event.authorization) {
@@ -169,7 +170,7 @@ curl http://localhost:3001/api/books/items -i
 
     }}
 
-``
+```
   
  - Yow will be able to view, for example admin or users just make sure you define the roles before to view your users roles.
  - You can curl to see your user or check client/views/External Api, you should see your role with other user info:
