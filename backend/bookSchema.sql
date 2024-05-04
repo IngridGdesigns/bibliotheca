@@ -1,6 +1,23 @@
 
 ---- SCHEMA v2 ----
 
+--              List of relations
+--  Schema |      Name       | Type  |  Owner  
+-- --------+-----------------+-------+---------
+--  public | author          | table | me
+--  public | book            | table | me
+--  public | book_copy       | table | me
+--  public | book_display    | table | me // not necessary
+--  public | category        | table | me
+--  public | fine            | table | me
+--  public | holds           | table | me
+--  public | library_account | table | me
+--  public | library_staff   | table | me
+--  public | publisher       | table | me
+--  public | reports         | table | me
+--  public | transaction     | table | me
+--  public | users           | table | me
+
 -- Table: Author
 CREATE TABLE author (
 author_id SERIAL PRIMARY KEY,
@@ -47,6 +64,19 @@ UNIQUE (book_id, copy_number),
 FOREIGN KEY (book_id) REFERENCES book(book_id)
 );
 
+-- Table for display - could join other tables, but was thinking of cascading - feature not included in app yet
+CREATE TABLE book_display (
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title text,
+    description text,
+    publisher_name text,
+    publication_year text,
+    pages text,
+    isbn text,
+    language text,
+    category text,
+    author_name text
+);
 
 -- Table: Users
 CREATE TABLE users (
