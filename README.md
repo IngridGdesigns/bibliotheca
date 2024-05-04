@@ -48,6 +48,22 @@ export default withAuth0(YourComponent);
  1. So, if planning to use [class components in React, visit for guidance](https://github.com/auth0/auth0-react/blob/main/EXAMPLES.md#use-with-a-class-component)
  and reach out to Auth0 if you cant find anything in the forums/discussions.
 
+## Current State of Bibliotheca app
+
+- User can sign up, register by email or OAuth and logout - Authorization and Authentication
+- Users can see profile page with info and role
+- "Automatic role assignation" I added a "rule" - added code and pushing that to the Management API
+- Admin can add, delete, update users, 
+- Dashboard displays books in the books table
+- Dashboard displays user in the users table
+- Dashboard has protected endpoint
+
+<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/signin.png" width="60%" height="60%">
+
+<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/bareBones.png" width="60%" height="60%">
+
+
+
 ## Getting Started
 
 1. clone the repo
@@ -178,7 +194,3 @@ curl http://localhost:3001/api/books/items -i
 
 Milestones: 
 - In the future I would like refactor to use Vite React to improve build performance.
-
-<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/signin.png" width="60%" height="60%">
-
-<img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/bareBones.png" width="60%" height="60%">
