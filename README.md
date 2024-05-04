@@ -62,7 +62,7 @@ export default withAuth0(YourComponent);
 
 <img src="https://github.com/IngridGdesigns/bibliotheca/blob/main/assets/bareBones.png" width="60%" height="60%">
 
-
+site is still a work in progress
 
 ## Getting Started
 
