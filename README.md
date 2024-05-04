@@ -32,6 +32,7 @@ import { useAuth0} from "@auth0/auth0-react"; <--- avoid if you are going to use
 ``` 
 
 ```javascript
+
 class YourComponent extends Component {
   async methodThatNeedsToRetrieveAToken() {
     const { getAccessTokenSilently } = this.props.auth0;
@@ -128,6 +129,7 @@ curl http://localhost:3001/api/books/items -i
    - Go to Actions and create a [new action to automatically assign role to users](https://auth0.com/blog/assign-default-role-on-sign-up-with-actions/)
     
     ```javascript
+
     exports.onExecutePostLogin = async (event, api) => {
 
 
@@ -136,7 +138,7 @@ curl http://localhost:3001/api/books/items -i
     return;
   }
 
-  <!-- // Create management API client instance -->
+  // Create management API client instance -->
   const ManagementClient = require("auth0").ManagementClient;
 
   const management = new ManagementClient({
@@ -154,10 +156,11 @@ curl http://localhost:3001/api/books/items -i
   } catch (e) {
     console.log(e);
   }
-};```
+};
 
+``
 
-# 
+Claims check code: 
 
 ```javascript
 
@@ -181,16 +184,15 @@ curl http://localhost:3001/api/books/items -i
   - Animated SVG Preloaders by SVGBackgrounds.com
 
 - favicon
- -book icon https://icons8.com/icon/112289/book
+book icon https://icons8.com/icon/112289/book
  https://icons8.com/icons/set/book
- faavicon
+ favicon
 
 # More Auth0 helpful links
 - https://auth0.com/docs/api/management/v2/users/get-user-roles
 
 - https://auth0.com/docs/manage-users/user-accounts/metadata/manage-user-metadata
  
-- https://auth0.com/docs/api/management/v2/users/get-user-roles
 
 Milestones: 
 - In the future I would like refactor to use Vite React to improve build performance.
